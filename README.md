@@ -2,6 +2,8 @@
 
 This PHP package is a lightweight wrapper for OVH APIs. That's the easiest way to use OVH.com APIs in your PHP applications.
 
+[![Build Status](https://travis-ci.org/ovh/php-ovh.svg)](https://travis-ci.org/ovh/php-ovh)
+
 ```php
 <?php
 /**
