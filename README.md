@@ -176,6 +176,38 @@ Supported APIs
  * Create application credentials: https://ca.api.ovh.com/createApp/
  * Create script credentials (all keys at once): https://ca.api.ovh.com/createToken/
 
+## So you Start Europe
+
+ * Documentation: https://eu.api.soyoustart.com/
+ * Community support: api-subscribe@ml.ovh.net
+ * Console: https://eu.api.soyoustart.com/console/
+ * Create application credentials: https://eu.api.soyoustart.com/createApp/
+ * Create script credentials (all keys at once): https://eu.api.soyoustart.com/createToken/
+
+## So you Start North America
+
+ * Documentation: https://ca.api.soyoustart.com/
+ * Community support: api-subscribe@ml.ovh.net
+ * Console: https://ca.api.soyoustart.com/console/
+ * Create application credentials: https://ca.api.soyoustart.com/createApp/
+ * Create script credentials (all keys at once): https://ca.api.soyoustart.com/createToken/
+
+## Kimsufi Europe
+
+ * Documentation: https://eu.api.kimsufi.com/
+ * Community support: api-subscribe@ml.ovh.net
+ * Console: https://eu.api.kimsufi.com/console/
+ * Create application credentials: https://eu.api.kimsufi.com/createApp/
+ * Create script credentials (all keys at once): https://eu.api.kimsufi.com/createToken/
+
+## Kimsufi North America
+
+ * Documentation: https://ca.api.kimsufi.com/
+ * Community support: api-subscribe@ml.ovh.net
+ * Console: https://ca.api.kimsufi.com/console/
+ * Create application credentials: https://ca.api.kimsufi.com/createApp/
+ * Create script credentials (all keys at once): https://ca.api.kimsufi.com/createToken/
+
 ## Runabove
 
  * Documentation: https://community.runabove.com/kb/en/instances/how-to-use-runabove-api.html
