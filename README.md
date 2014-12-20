@@ -47,6 +47,12 @@ Then, you can install OVH APIs wrapper and dependencies with:
 This will install ``ovh/ovh`` to ``./vendor``, along with other dependencies
 including ``autoload.php``.
 
+Symfony integration
+-------------------
+
+[Les-Tilleuls.coop](http://les-tilleuls.coop) provides a bundle integrating this SDK with
+[the Symfony framework](http://symfony.com): [CoopTilleulsOvhBundle](https://github.com/coopTilleuls/CoopTilleulsOvhBundle).
+
 How to login as a user?
 -----------------------
 
