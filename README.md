@@ -71,7 +71,7 @@ $redirection = "http://your_url.ovh";
 $endpoint = 'ovh-eu';
 $rights = array( (object) [
     'method'    => 'GET',
-    'path'      => '/me/*'
+    'path'      => '/me*'
 ]);
 
 // Get credentials
