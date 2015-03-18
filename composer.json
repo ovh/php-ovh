@@ -1,6 +1,7 @@
 {
     "name": "ovh/ovh",
     "description": "Wrapper for OVH APIs",
+    "license": "BSD-3-Clause",
     "require": {
         "guzzlehttp/guzzle": ">=4.0,<6.0"
     },
