@@ -33,7 +33,7 @@ namespace Ovh\Exceptions;
 use Exception;
 
 /**
- * ApiException exception is throwed when a request to OVH API failed
+ * ApiException exception is thrown when a request to OVH API failed
  *
  * ApiException appears when the request to OVH API return an error (HTTP
  * code < 100 or >= 400)

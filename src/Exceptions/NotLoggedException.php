@@ -33,7 +33,7 @@ namespace Ovh\Exceptions;
 use Exception;
 
 /**
- * NotLoggedException exception is throwed when there is no credentials defined
+ * NotLoggedException exception is thrown when there is no credentials defined
  *
  * NotLoggedException appears when there is no credentials defined in openstack
  *
