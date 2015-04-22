@@ -249,7 +249,7 @@ class Api
      * Wrap call to Ovh APIs for GET requests
      *
      * @param string $path path ask inside api
-     * @param array\\stdClass|null $content content to send inside body of request
+     * @param array|\stdClass|null $content content to send inside body of request
      *
      * @return array
      *
@@ -266,7 +266,7 @@ class Api
      * Wrap call to Ovh APIs for POST requests
      *
      * @param string $path path ask inside api
-     * @param array\\stdClass|null $content content to send inside body of request
+     * @param array|\stdClass|null $content content to send inside body of request
      *
      * @return array
      *
@@ -283,7 +283,7 @@ class Api
      * Wrap call to Ovh APIs for PUT requests
      *
      * @param string $path path ask inside api
-     * @param array\\stdClass|null $content content to send inside body of request
+     * @param array|\stdClass|null $content content to send inside body of request
      *
      * @return array
      *
@@ -300,7 +300,7 @@ class Api
      * Wrap call to Ovh APIs for DELETE requests
      *
      * @param string $path path ask inside api
-     * @param array\\stdClass|null $content content to send inside body of request
+     * @param array|\stdClass|null $content content to send inside body of request
      *
      * @return array
      *
