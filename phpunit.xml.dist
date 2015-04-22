@@ -10,5 +10,10 @@
         <env name="APP_KEY" value=""/>
         <env name="APP_SECRET" value=""/>
         <env name="CONSUMER" value=""/>
-	</php>
+    </php>
+    <filter>
+        <whitelist>
+            <directory>src</directory>
+        </whitelist>
+    </filter>
 </phpunit>
