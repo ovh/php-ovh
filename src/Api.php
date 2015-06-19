@@ -34,7 +34,7 @@ use GuzzleHttp\Client as GClient;
 use GuzzleHttp\Stream\Stream;
 
 /**
- * Wrapper to manage login and exchanges with simplest Ovh API
+ * Wrapper to manage login and exchanges with simpliest Ovh API
  *
  * This class manage how works connections to the simple Ovh API with
  * login method and call wrapper
@@ -93,15 +93,15 @@ class Api
     /**
      * Construct a new wrapper instance
      *
-     * @param string $application_key key of your application.
+     * @param $application_key key of your application.
      * For OVH APIs, you can create a application's credentials on https://api.ovh.com/createApp/
-     * @param string $application_secret secret of your application.
-     * @param string $api_endpoint name of api selected
-     * @param string|null $consumer_key If you have already a consumer key, this parameter prevent to do a
+     * @param $application_secret secret of your application.
+     * @param $api_endpoint name of api selected
+     * @param $consumer_key If you have already a consumer key, this parameter prevent to do a
      * new authentication
-     * @param GClient|null $http_client instance of http client
+     * @param $http_client instance of http client
      *
-     * @throws Exceptions\InvalidParameterException if one parameter is missing or with bad value
+     * @throws InvalidParameterException if one parameter is missing or with bad value
      */
     public function __construct(
         $application_key,
@@ -157,10 +157,8 @@ class Api
      * Request a consumer key from the API and the validation link to
      * authorize user to validate this consumer key
      *
-     * @param array $accessRules list of rules your application need.
-     * @param string|null $redirection url to redirect on your website after authentication
-     *
-     * @return array
+     * @param $accessRules list of rules your application need.
+     * @param $redirection url to redirect on your website after authentication
      *
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
@@ -188,12 +186,10 @@ class Api
      * This is the main method of this wrapper. It will
      * sign a given query and return its result.
      *
-     * @param string $method HTTP method of request (GET,POST,PUT,DELETE)
-     * @param string $path relative url of API request
-     * @param array|\stdClass|null $content body of the request
-     * @param bool $is_authenticated if the request use authentication
-     *
-     * @return array
+     * @param $method HTTP method of request (GET,POST,PUT,DELETE)
+     * @param $path relative url of API request
+     * @param $content body of the request
+     * @param $is_authenticated if the request use authentication
      *
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
@@ -248,10 +244,8 @@ class Api
     /**
      * Wrap call to Ovh APIs for GET requests
      *
-     * @param string $path path ask inside api
-     * @param array|\stdClass|null $content content to send inside body of request
-     *
-     * @return array
+     * @param $path path ask inside api
+     * @param $content content to send inside body of request
      *
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
@@ -265,16 +259,14 @@ class Api
     /**
      * Wrap call to Ovh APIs for POST requests
      *
-     * @param string $path path ask inside api
-     * @param array|\stdClass|null $content content to send inside body of request
-     *
-     * @return array
+     * @param $path path ask inside api
+     * @param $content content to send inside body of request
      *
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
     public function post(
         $path,
-        $content
+        $content = null
     ) {
         return $this->rawCall("POST", $path, $content);
     }
@@ -282,10 +274,8 @@ class Api
     /**
      * Wrap call to Ovh APIs for PUT requests
      *
-     * @param string $path path ask inside api
-     * @param array|\stdClass|null $content content to send inside body of request
-     *
-     * @return array
+     * @param $path path ask inside api
+     * @param $content content to send inside body of request
      *
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
@@ -299,10 +289,8 @@ class Api
     /**
      * Wrap call to Ovh APIs for DELETE requests
      *
-     * @param string $path path ask inside api
-     * @param array|\stdClass|null $content content to send inside body of request
-     *
-     * @return array
+     * @param $path path ask inside api
+     * @param $content content to send inside body of request
      *
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
