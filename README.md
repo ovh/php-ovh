@@ -215,7 +215,6 @@ Supported APIs
  * Community support: https://community.runabove.com
  * Console: https://api.runabove.com/console/
  * Create application credentials: https://api.runabove.com/createApp/
- * Create script credentials (all keys at once): https://api.runabove.com/createToken/
 
 ## Related links
 
