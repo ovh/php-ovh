@@ -128,6 +128,8 @@ class Api
 
         if (!isset($http_client)) {
             $http_client = new GClient();
+            $http_client->setDefaultOption('timeout', 30);
+            $http_client->setDefaultOption('connect_timeout', 5);
         }
 
         $this->application_key = $application_key;
