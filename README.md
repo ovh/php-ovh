@@ -124,6 +124,40 @@ foreach ($servers as $server) {
 
 ?>
 ```
+How to customize HTTP client configuration?
+-------------------------------------------
+
+You can inject your own HTTP client with your specific configuration. For instance, you can edit user-agent and timeout for all your requests
+
+```php
+<?php
+require __DIR__ . '/vendor/autoload.php';
+use \Ovh\Api;
+use GuzzleHttp\Client;
+
+// Informations about your application
+$applicationKey = "your_app_key";
+$applicationSecret = "your_app_secret";
+$consumer_key = "your_consumer_key";
+
+// Information about API and rights asked
+$endpoint = 'ovh-eu';
+
+$client = new Client();
+$client->setDefaultOption('timeout', 1);
+$client->setDefaultOption('headers', array('User-Agent' => 'api_client') );
+
+// Get servers list
+$conn = new Api(    $applicationKey,
+                    $applicationSecret,
+                    $endpoint,
+                    $consumer_key,
+                    $client);
+$webHosting = $conn->get('/hosting/web/');
+
+foreach ($webHosting as $webHosting) {
+        echo "One of our web hosting: " . $webHosting . "\n";
+```
 
 How to build the documentation?
 -------------------------------
