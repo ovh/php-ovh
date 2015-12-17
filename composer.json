@@ -5,11 +5,6 @@
     "require": {
         "guzzlehttp/guzzle": "^6.0"
     },
-    "authors": [
-        {
-            "name": "Vincent Cassé"
-        }
-    ],
     "autoload": {
         "psr-4": {"Ovh\\": "src/"}
     },

@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2013-2014, OVH SAS.
+# Copyright (c) 2013-2016, OVH SAS.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -44,8 +44,6 @@ use GuzzleHttp\Psr7\Response;
  *
  * @package  Ovh
  * @category Ovh
- * @author   Vincent Cassé <vincent.casse@ovh.net>
- * @author   Thierry Goettelmann <thierry@byscripts.info>
  */
 class Api
 {
@@ -144,9 +142,10 @@ class Api
         }
 
         if (!isset($http_client)) {
-            $http_client = new Client();
-            $http_client->setDefaultOption('timeout', 30);
-            $http_client->setDefaultOption('connect_timeout', 5);
+            $http_client = new Client([
+                'timeout'         => 30,
+                'connect_timeout' => 5,
+            ]);
         }
 
         $this->application_key    = $application_key;
