@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2013-2014, OVH SAS.
+# Copyright (c) 2013-2016, OVH SAS.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,140 +27,257 @@
 
 namespace Ovh\tests;
 
-use Ovh\Api;
-
 use GuzzleHttp\Client;
-use GuzzleHttp\Subscriber\Mock;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
+use Ovh\Api;
 
 /**
  * Test Api class
  *
- * @package Ovh
+ * @package  Ovh
  * @category Ovh
- * @author Vincent Cassé <vincent.casse@ovh.net>
  */
-class ApiTest extends \PHPUnit_Framework_TestCase {
+class ApiTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @var Client
+     */
+    private $client;
 
-	/**
-	 * Define id to create object
-	 */
-	protected function setUp()
+    /**
+     * @var string
+     */
+    private $application_key;
+
+    /**
+     * @var string
+     */
+    private $consumer_key;
+
+    /**
+     * @var string
+     */
+    private $endpoint;
+
+    /**
+     * @var string
+     */
+    private $application_secret;
+
+    /**
+     * Define id to create object
+     */
+    protected function setUp()
     {
-		$this->application_key = 'app_key';
-		$this->application_secret = 'app_secret';
-		$this->consumer_key = 'consumer';
-		$this->endpoint = 'ovh-eu';
+        $this->application_key    = 'app_key';
+        $this->application_secret = 'app_secret';
+        $this->consumer_key       = 'consumer';
+        $this->endpoint           = 'ovh-eu';
 
         $this->client = new Client();
     }
 
     /**
      * Get private and protected method to unit test it
+     *
+     * @param string $name
+     *
+     * @return \ReflectionMethod
      */
     protected static function getPrivateMethod($name)
     {
-        $class = new \ReflectionClass('Ovh\Api');
+        $class  = new \ReflectionClass('Ovh\Api');
         $method = $class->getMethod($name);
         $method->setAccessible(true);
+
         return $method;
     }
 
+    /**
+     * Get private and protected property to unit test it
+     *
+     * @param string $name
+     *
+     * @return \ReflectionProperty
+     */
     protected static function getPrivateProperty($name)
     {
-        $class = new \ReflectionClass('Ovh\Api');
+        $class    = new \ReflectionClass('Ovh\Api');
         $property = $class->getProperty($name);
         $property->setAccessible(true);
+
         return $property;
     }
 
-	/**
-	 * Test the compute of time delta
-	 */
-	public function testTimeDeltaCompute()
-	{
-		$delay = 10;
-        $mock = new Mock([
-        	"HTTP/1.1 200 OK\r\n\r\n". (time()-$delay),
-        ]);
-		$this->client->getEmitter()->attach($mock);
+    /**
+     * Test missing $application_key
+     */
+    public function testMissingApplicationKey()
+    {
+        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Application key');
+        new Api(null, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+    }
 
-		$invoker = self::getPrivateMethod('calculateTimeDelta');
-		$property = self::getPrivateProperty('time_delta');
-		$api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
-		$invoker->invokeArgs($api, array()) ;
+    /**
+     * Test missing $application_secret
+     */
+    public function testMissingApplicationSecret()
+    {
+        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Application secret');
+        new Api($this->application_key, null, $this->endpoint, $this->consumer_key, $this->client);
+    }
 
-		$time_delta = $property->getValue($api);
-		$this->assertNotNull($time_delta);
-		$this->assertEquals($time_delta, $delay * -1 );
-	}
+    /**
+     * Test missing $api_endpoint
+     */
+    public function testMissingApiEndpoint()
+    {
+        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Endpoint');
+        new Api($this->application_key, $this->application_secret, null, $this->consumer_key, $this->client);
+    }
 
-	/**
-	 * Test if consumer key is replaced
-	 */
-	public function testIfConsumerKeyIsReplace()
-	{
-		$delay = 10;
-        $mock = new Mock([
-        	"HTTP/1.1 200 OK\r\n\r\n". '{"validationUrl":"https://api.ovh.com/login/?credentialToken=token","consumerKey":"consumer_remote","state":"pendingValidation"}'
-        ]);
-		$this->client->getEmitter()->attach($mock);
+    /**
+     * Test bad $api_endpoint
+     */
+    public function testBadApiEndpoint()
+    {
+        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Unknown');
+        new Api($this->application_key, $this->application_secret, 'i_am_invalid', $this->consumer_key, $this->client);
+    }
 
-		$property = self::getPrivateProperty('consumer_key');
-		$api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
-		$accessRules = array( json_decode(' { "method": "GET", "path": "/*" } ') );
+    /**
+     * Test creating Client if none is provided
+     */
+    public function testClientCreation()
+    {
+        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key);
 
-		$credentials = $api->requestCredentials($accessRules);
-		$consumer_key = $property->getValue($api);
+        $this->assertInstanceOf('\\GuzzleHttp\\Client', $api->getHttpClient());
+    }
 
-		$this->assertEquals( $consumer_key , $credentials["consumerKey"]);
-		$this->assertNotEquals( $consumer_key, $this->consumer_key );
-	}
+    /**
+     * Test the compute of time delta
+     */
+    public function testTimeDeltaCompute()
+    {
+        $delay = 10;
 
-	/**
-	 * Test invalid applicationKey
-	 */
-	public function testInvalidApplicationKey()
-	{
-		$this->setExpectedException(
-          '\GuzzleHttp\Exception\ClientException'
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+
+            $body = $response->getBody();
+            $body->write(time() - 10);
+
+            return $response
+                ->withStatus(200)
+                ->withBody($body);
+        }));
+
+        $invoker  = self::getPrivateMethod('calculateTimeDelta');
+        $property = self::getPrivateProperty('time_delta');
+
+        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+        $invoker->invokeArgs($api, []);
+
+        $time_delta = $property->getValue($api);
+        $this->assertNotNull($time_delta);
+        $this->assertEquals($time_delta, $delay * -1);
+    }
+
+    /**
+     * Test if consumer key is replaced
+     */
+    public function testIfConsumerKeyIsReplace()
+    {
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+
+            $body = $response->getBody();
+            $body->write('{"validationUrl":"https://api.ovh.com/login/?credentialToken=token","consumerKey":"consumer_remote","state":"pendingValidation"}');
+
+            return $response
+                ->withStatus(200)
+                ->withBody($body);
+        }));
+
+        $property = self::getPrivateProperty('consumer_key');
+
+        $api         = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+        $accessRules = [json_decode(' { "method": "GET", "path": "/*" } ')];
+
+        $credentials = $api->requestCredentials($accessRules);
+
+        $consumer_key = $property->getValue($api);
+
+        $this->assertEquals($consumer_key, $credentials["consumerKey"]);
+        $this->assertNotEquals($consumer_key, $this->consumer_key);
+    }
+
+    /**
+     * Test invalid applicationKey
+     */
+    public function testInvalidApplicationKey()
+    {
+        $this->setExpectedException(
+            '\GuzzleHttp\Exception\ClientException'
         );
 
-		$delay = 10;
-        $mock = new Mock([
-        	"HTTP/1.1 401 Unauthorized\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 37\r\n\r\n{\"message\":\"Invalid application key\"}"
-        ]);
-		$this->client->getEmitter()->attach($mock);
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
-		$property = self::getPrivateProperty('consumer_key');
-		$api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
-		$accessRules = array( json_decode(' { "method": "GET", "path": "/*" } ') );
+            $body = $response->getBody();
+            $body->write('{\"message\":\"Invalid application key\"}');
 
-		$credentials = $api->requestCredentials($accessRules);
-		$consumer_key = $property->getValue($api);
+            return $response
+                ->withStatus(401, 'POUET')
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withHeader('Content-Length', 37)
+                ->withBody($body);
+        }));
 
-		$this->assertEquals( $consumer_key , $credentials["consumerKey"]);
-		$this->assertNotEquals( $consumer_key, $this->consumer_key );
-	}
+        $property    = self::getPrivateProperty('consumer_key');
+        $api         = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+        $accessRules = [json_decode(' { "method": "GET", "path": "/*" } ')];
 
-	/**
-	 * Test invalid rights
-	 */
-	public function testInvalidRight()
-	{
-		$this->setExpectedException(
-          '\GuzzleHttp\Exception\ClientException'
+        $credentials  = $api->requestCredentials($accessRules);
+        $consumer_key = $property->getValue($api);
+
+        $this->assertEquals($consumer_key, $credentials["consumerKey"]);
+        $this->assertNotEquals($consumer_key, $this->consumer_key);
+    }
+
+    /**
+     * Test invalid rights
+     */
+    public function testInvalidRight()
+    {
+        $this->setExpectedException(
+            '\GuzzleHttp\Exception\ClientException'
         );
 
-		$delay = 10;
-        $mock = new Mock([
-        	"HTTP/1.1 403 Forbidden\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 37\r\n\r\n{\"message\":\"Invalid credentials\"}"
-        ]);
-		$this->client->getEmitter()->attach($mock);
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
-		$api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+            $body = $response->getBody();
+            $body->write('{\"message\":\"Invalid credentials\"}');
 
-		$invoker = self::getPrivateMethod('rawCall');
-		$invoker->invokeArgs($api, array('GET', '/me')) ;
-	}
+            return $response
+                ->withStatus(403)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withHeader('Content-Length', 37)
+                ->withBody($body);
+        }));
+
+        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+
+        $invoker = self::getPrivateMethod('rawCall');
+        $invoker->invokeArgs($api, ['GET', '/me']);
+    }
+
+    public function testGetConsumerKey()
+    {
+        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+        $this->assertEquals($this->consumer_key, $api->getConsumerKey());
+    }
 }
-

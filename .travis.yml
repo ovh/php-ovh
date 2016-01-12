@@ -1,12 +1,18 @@
+addons:
+  apt:
+    packages:
+    - libcurl4-openssl-dev
+
 language: php
 php:
   - hhvm
+  - 7.0	
   - 5.6
   - 5.5
-  - 5.4
   - 7.0
 
 before_script:
-  - composer install --dev
+  - composer self-update
+  - composer install
 
 script: phpunit tests/ApiTest.php

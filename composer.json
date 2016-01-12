@@ -3,13 +3,8 @@
     "description": "Wrapper for OVH APIs",
     "license": "BSD-3-Clause",
     "require": {
-        "guzzlehttp/guzzle": ">=4.0,<6.0"
+        "guzzlehttp/guzzle": "^6.0"
     },
-    "authors": [
-        {
-            "name": "Vincent Cassé"
-        }
-    ],
     "autoload": {
         "psr-4": {"Ovh\\": "src/"}
     },
