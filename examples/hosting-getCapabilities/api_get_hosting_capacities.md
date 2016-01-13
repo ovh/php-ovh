@@ -13,14 +13,14 @@ This documentation will help you to get informations about your web hosting offe
 - Download the latest release **with dependencies** on github: https://github.com/ovh/php-ovh/releases
 
 ```bash
-# When this article was written, latest version is 1.1.2
-wget https://github.com/ovh/php-ovh/releases/download/v1.1.2/php-ovh-1.1.2-with-dependencies.tar.gz
+# When this article was written, latest version is 2.0.0
+wget https://github.com/ovh/php-ovh/releases/download/v2.0.0/php-ovh-2.0.0-with-dependencies.tar.gz
 ```
 
 - Extract it into a folder
 
 ```bash
-tar xzvf php-ovh-1.1.2-with-dependencies.tar.gz 
+tar xzvf php-ovh-2.0.0-with-dependencies.tar.gz 
 ```
 
 - Create a new token
@@ -29,7 +29,7 @@ You can create a new token using these url: [https://api.ovh.com/createToken/?GE
 Be warn, this token is only validated for this script and for hosting called **my_domain**. Please replace **my_domain** by your web hosting reference!
 If you need a more generic token, you had to change right field.
 
-- Create php file to get capabilities in the folder 
+- Create php file to get capabilities in the folder. You can download [this file](https://github.com/ovh/php-ovh/blob/master/examples/hosting-getCapabilities/apiv6.php)
 
 ```php
 <?php
