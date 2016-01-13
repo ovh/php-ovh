@@ -1,12 +1,12 @@
-How to get web hosting capabilities using php wrapper?
-----------------------------------------------------
+How to create HTTP redirection using php wrapper?
+-------------------------------------------------
 
 This documentation will help you to create an HTTP redirection from a subdomain to another domain. Following script include DNS record check and delete record if their will conflict with your redirection!
 
 ## Requirements
 
 - Having PHP 5.2+
-- Having a dns record at OVH
+- Having a DNS zone at OVH
 
 ## Download PHP wrapper
 
@@ -25,7 +25,8 @@ tar xzvf php-ovh-2.0.0-with-dependencies.tar.gz
 
 ## Create a new token
 
-You can create a new token using this url: [https://api.ovh.com/createToken/?GET=/domain/zone/*&POST=/domain/zone/*&DELETE=/domain/zone/*](https://api.ovh.com/createToken/?GET=/domain/zone/*&POST=/domain/zone/*&DELETE=/domain/zone/*). Keep application key, application secret and consumer key to complete the script.
+You can create a new token using this url: [https://api.ovh.com/createToken/?GET=/domain/zone/*&POST=/domain/zone/*&DELETE=/domain/zone/*](https://api.ovh.com/createToken/?GET=/domain/zone/*&POST=/domain/zone/*&DELETE=/domain/zone/*).
+Keep application key, application secret and consumer key to complete the script.
 
 Be warned, this token is only valid for this script on **/domain/zone/\*** APIs.
 If you need a more generic token, you may adjust the **Rights** fields at your needs.
