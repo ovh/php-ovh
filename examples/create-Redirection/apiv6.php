@@ -7,7 +7,7 @@ $applicationKey = "your_app_key";
 $applicationSecret = "your_app_secret";
 $consumer_key = "your_consumer_key";
 
-// Information about API and rights asked
+// Information about API endpoint used
 $endpoint = 'ovh-eu';
 
 // Information about your domain and redirection
@@ -16,7 +16,7 @@ $subDomain = 'www'; // Here, the redirection will come from www.yourdomain.com
 $targetDomain = 'my_target.ovh';
 $type = 'visible'; // can be "visible", "invisible", "visiblePermanent"
 
-// Field to complete in case of invisible redirection
+// Field to set in case of invisible redirection
 $title = ''; 
 $keywords = '';
 $description = '';
@@ -30,22 +30,18 @@ $conn = new Api(    $applicationKey,
 try {
 
 	// check if dns record are available
-	$recordIds = $conn->get('/domain/zone/' . $domain . '/record');
+	$recordIds = $conn->get('/domain/zone/' . $domain . '/record?subDomain='. $subDomain );
 
 	foreach ($recordIds as $recordId) {
 		$record = $conn->get('/domain/zone/' . $domain . '/record/' . $recordId);
 	
 		// If record include A, AAAA or CNAME for subdomain asked, we delete it
-		if (	strcmp( $record['subDomain'], $subDomain) === 0 &&
-			in_array( $record['fieldType'], array( 'A', 'AAAA', 'CNAME' ) ) ) {
+		if ( in_array( $record['fieldType'], array( 'A', 'AAAA', 'CNAME' ) ) ) {
 			
 			echo "We will delete field " . $record['fieldType'] . " for " . $record['zone'] . PHP_EOL;
 			$conn->delete('/domain/zone/' . $domain . '/record/' . $recordId);
 		}
 	}
-
-	// We apply zone changes
-	$conn->post('/domain/zone/' . $domain . '/refresh');
 
 	// Now, we are ready to create our new redirection
 	$redirection = $conn->post('/domain/zone/' . $domain . '/redirection', array(
@@ -56,6 +52,9 @@ try {
 		'description'	=> $description,
 		'keywords'	=> $keywords,
 	));
+
+	// We apply zone changes
+	$conn->post('/domain/zone/' . $domain . '/refresh');
 
 	print_r( $redirection );
 

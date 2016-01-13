@@ -13,7 +13,7 @@ This documentation will help you to get informations about your web hosting offe
 - Download the latest release **with dependencies** on github: https://github.com/ovh/php-ovh/releases
 
 ```bash
-# When this article was written, latest version is 2.0.0
+# When this article is written, latest version is 2.0.0
 wget https://github.com/ovh/php-ovh/releases/download/v2.0.0/php-ovh-2.0.0-with-dependencies.tar.gz
 ```
 
@@ -24,7 +24,7 @@ tar xzvf php-ovh-2.0.0-with-dependencies.tar.gz
 ```
 
 - Create a new token
-You can create a new token using these url: [https://api.ovh.com/createToken/?GET=/hosting/web/my_domain&GET=/hosting/web/offerCapabilities](https://api.ovh.com/createToken/?GET=/hosting/web/my_domain&GET=/hosting/web/offerCapabilities). Keep application key, application secret and consumer key to complete the script.
+You can create a new token using this url: [https://api.ovh.com/createToken/?GET=/hosting/web/my_domain&GET=/hosting/web/offerCapabilities](https://api.ovh.com/createToken/?GET=/hosting/web/my_domain&GET=/hosting/web/offerCapabilities). Keep application key, application secret and consumer key to complete the script.
 
 Be warn, this token is only validated for this script and for hosting called **my_domain**. Please replace **my_domain** by your web hosting reference!
 If you need a more generic token, you had to change right field.
