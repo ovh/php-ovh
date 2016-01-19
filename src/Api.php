@@ -223,11 +223,16 @@ class Api
 
         if (isset($content) && $method == 'GET') {
 
-            $queryString = $request->getUri()->getQuery();
+            $query_string = $request->getUri()->getQuery();
 
-            $query = false !== strpos($queryString, '&')
-                ? explode('&', $queryString)
-                : [];
+            $query = array();
+            if ($query_string != '') {
+                $queries = explode('&', $query_string);
+                foreach($queries as $element) {
+                    $key_value_query = explode('=', $element, 2);
+                    $query[$key_value_query[0]] = $key_value_query[1];
+                }
+            }
 
             $query = array_merge($query, (array)$content);
             $query = \GuzzleHttp\Psr7\build_query($query);
