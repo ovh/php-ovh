@@ -232,7 +232,8 @@ class Api
             $query = array_merge($query, (array)$content);
             $query = \GuzzleHttp\Psr7\build_query($query);
 
-            $request = $request->withUri($request->getUri()->withQuery($query));
+            $url     = $request->getUri()->withQuery($query);
+            $request = $request->withUri($url);
             $body    = "";
         } elseif (isset($content)) {
             $body = json_encode($content);

@@ -242,4 +242,12 @@ class ApiFunctionalTest extends \PHPUnit_Framework_TestCase
 
         $this->api->get('/me/accessRestriction/ip', ['foo' => 'bar']);
     }
+
+    /**
+     * Test Api::get, should build valide signature
+     */
+    public function testApiGetWithQueryString()
+    {
+        $this->api->get('/me/api/credential', ['status' => 'pendingValidation']);
+    }
 }
