@@ -30,6 +30,7 @@ namespace Ovh\tests;
 use GuzzleHttp\Client;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Request;
 use Ovh\Api;
 
 /**
@@ -280,4 +281,90 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $this->assertEquals($this->consumer_key, $api->getConsumerKey());
     }
+
+
+    /**
+     * Test GET query args
+     */
+    public function testGetQueryArgs()
+    {
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapRequest(function (Request $request) {
+            if($request->getUri()->getPath() == "/1.0/auth/time") {
+                return $request;
+            }
+
+            $query_string = $request->getUri()->getQuery();
+            $this->assertEquals($query_string, 'applicationId=49&status=pendingValidation');
+
+            $request = $request->withUri($request->getUri()
+                ->withHost('httpbin.org')
+                ->withPath('/')
+                ->withQuery(''));
+            return $request;
+        }));
+        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
+        //    return $response;
+        //}));
+
+        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+        $api->get('/me/api/credential?applicationId=49', ['status' => 'pendingValidation']);
+    }
+
+    /**
+     * Test GET overlapping query args
+     */
+    public function testGetOverlappingQueryArgs()
+    {
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapRequest(function (Request $request) {
+            if($request->getUri()->getPath() == "/1.0/auth/time") {
+                return $request;
+            }
+
+            $query_string = $request->getUri()->getQuery();
+            $this->assertEquals($query_string, 'applicationId=49&status=expired&test=success');
+
+            $request = $request->withUri($request->getUri()
+                ->withHost('httpbin.org')
+                ->withPath('/')
+                ->withQuery(''));
+            return $request;
+        }));
+        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
+        //    return $response;
+        //}));
+
+        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+        $api->get('/me/api/credential?applicationId=49&status=pendingValidation', ['status' => 'expired', 'test' => "success"]);
+    }
+
+    /**
+     * Test GET boolean query args
+     */
+    public function testGetBooleanQueryArgs()
+    {
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapRequest(function (Request $request) {
+            if($request->getUri()->getPath() == "/1.0/auth/time") {
+                return $request;
+            }
+
+            $query_string = $request->getUri()->getQuery();
+            $this->assertEquals($query_string, 'dryRun=true&notDryRun=false');
+
+            $request = $request->withUri($request->getUri()
+                ->withHost('httpbin.org')
+                ->withPath('/')
+                ->withQuery(''));
+            return $request;
+        }));
+        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
+        //    return $response;
+        //}));
+
+        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+        $api->get('/me/api/credential', ['dryRun' => true, 'noDryRun' => false]);
+    }
+
 }

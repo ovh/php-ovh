@@ -226,7 +226,7 @@ class Api
             $query_string = $request->getUri()->getQuery();
 
             $query = array();
-            if ($query_string != '') {
+            if (!empty($query_string)) {
                 $queries = explode('&', $query_string);
                 foreach($queries as $element) {
                     $key_value_query = explode('=', $element, 2);
