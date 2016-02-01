@@ -48,6 +48,11 @@ Then, you can install OVH APIs wrapper and dependencies with:
 This will install ``ovh/ovh`` to ``./vendor``, along with other dependencies
 including ``autoload.php``.
 
+OVH cookbook
+------------
+
+Do you want to use OVH APIs? Maybe the script you want is already written in the [example part](examples/README.md) of this repository!
+
 How to login as a user?
 -----------------------
 
