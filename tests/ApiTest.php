@@ -364,7 +364,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         //}));
 
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
-        $api->get('/me/api/credential', ['dryRun' => true, 'noDryRun' => false]);
+        $api->get('/me/api/credential', ['dryRun' => true, 'notDryRun' => false]);
     }
 
 }

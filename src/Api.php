@@ -235,6 +235,20 @@ class Api
             }
 
             $query = array_merge($query, (array)$content);
+
+            // rewrite query args to properly dump true/false parameters
+            foreach($query as $key => $value)
+            {
+                if ($value === false)
+                {
+                    $query[$key] = "false";
+                }
+                elseif ($value === true)
+                {
+                    $query[$key] = "true";
+                }
+            }
+
             $query = \GuzzleHttp\Psr7\build_query($query);
 
             $url     = $request->getUri()->withQuery($query);
