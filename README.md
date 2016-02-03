@@ -202,7 +202,7 @@ Supported APIs
 
 ## OVH Europe
 
- * $endpoint = 'ovh-eu';
+ * ```$endpoint = 'ovh-eu';```
  * Documentation: https://eu.api.ovh.com/
  * Community support: api-subscribe@ml.ovh.net
  * Console: https://eu.api.ovh.com/console
@@ -211,7 +211,7 @@ Supported APIs
 
 ## OVH North America
 
- * $endpoint = 'ovh-ca';
+ * ```$endpoint = 'ovh-ca';```
  * Documentation: https://ca.api.ovh.com/
  * Community support: api-subscribe@ml.ovh.net
  * Console: https://ca.api.ovh.com/console
@@ -220,7 +220,7 @@ Supported APIs
 
 ## So you Start Europe
 
- * $endpoint = 'soyoustart-eu';
+ * ```$endpoint = 'soyoustart-eu';```
  * Documentation: https://eu.api.soyoustart.com/
  * Community support: api-subscribe@ml.ovh.net
  * Console: https://eu.api.soyoustart.com/console/
@@ -229,7 +229,7 @@ Supported APIs
 
 ## So you Start North America
 
- * $endpoint = 'soyoustart-ca';
+ * ```$endpoint = 'soyoustart-ca';```
  * Documentation: https://ca.api.soyoustart.com/
  * Community support: api-subscribe@ml.ovh.net
  * Console: https://ca.api.soyoustart.com/console/
@@ -238,7 +238,7 @@ Supported APIs
 
 ## Kimsufi Europe
 
- * $endpoint = 'kimsufi-eu';
+ * ```$endpoint = 'kimsufi-eu';```
  * Documentation: https://eu.api.kimsufi.com/
  * Community support: api-subscribe@ml.ovh.net
  * Console: https://eu.api.kimsufi.com/console/
@@ -247,7 +247,7 @@ Supported APIs
 
 ## Kimsufi North America
 
- * $endpoint = 'kimsufi-ca';
+ * ```$endpoint = 'kimsufi-ca';```
  * Documentation: https://ca.api.kimsufi.com/
  * Community support: api-subscribe@ml.ovh.net
  * Console: https://ca.api.kimsufi.com/console/
@@ -256,7 +256,7 @@ Supported APIs
 
 ## Runabove
 
- * $endpoint = 'runabove-ca';
+ * ```$endpoint = 'runabove-ca';```
  * Documentation: https://community.runabove.com/kb/en/instances/how-to-use-runabove-api.html
  * Community support: https://community.runabove.com
  * Console: https://api.runabove.com/console/
