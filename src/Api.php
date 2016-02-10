@@ -223,13 +223,32 @@ class Api
 
         if (isset($content) && $method == 'GET') {
 
-            $queryString = $request->getUri()->getQuery();
+            $query_string = $request->getUri()->getQuery();
 
-            $query = false !== strpos($queryString, '&')
-                ? explode('&', $queryString)
-                : [];
+            $query = array();
+            if (!empty($query_string)) {
+                $queries = explode('&', $query_string);
+                foreach($queries as $element) {
+                    $key_value_query = explode('=', $element, 2);
+                    $query[$key_value_query[0]] = $key_value_query[1];
+                }
+            }
 
             $query = array_merge($query, (array)$content);
+
+            // rewrite query args to properly dump true/false parameters
+            foreach($query as $key => $value)
+            {
+                if ($value === false)
+                {
+                    $query[$key] = "false";
+                }
+                elseif ($value === true)
+                {
+                    $query[$key] = "true";
+                }
+            }
+
             $query = \GuzzleHttp\Psr7\build_query($query);
 
             $url     = $request->getUri()->withQuery($query);
