@@ -165,8 +165,13 @@ class Api
     private function calculateTimeDelta()
     {
         if (!isset($this->time_delta)) {
-            $response         = $this->http_client->get($this->endpoint . "/auth/time");
-            $serverTimestamp  = (int)(String)$response->getBody();
+            $response         = $this->rawCall(
+                'GET',
+                "/auth/time",
+                null,
+                false
+            );
+            $serverTimestamp  = (int)(string)$response->getBody();
             $this->time_delta = $serverTimestamp - (int)\time();
         }
 
