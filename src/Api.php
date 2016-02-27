@@ -192,11 +192,13 @@ class Api
         $parameters->redirection = $redirection;
 
         //bypass authentication for this call
-        $response = $this->rawCall(
-            'POST',
-            '/auth/credential',
-            $parameters,
-            false
+        $response = $this->decodeResponse(
+            $this->rawCall(
+                'POST',
+                '/auth/credential',
+                $parameters,
+                false
+            )
         );
 
         $this->consumer_key = $response["consumerKey"];
@@ -220,7 +222,6 @@ class Api
     {
         $url     = $this->endpoint . $path;
         $request = new Request($method, $url);
-
         if (isset($content) && $method == 'GET') {
 
             $query_string = $request->getUri()->getQuery();
@@ -261,7 +262,6 @@ class Api
         } else {
             $body = "";
         }
-
         $headers = [
             'Content-Type'      => 'application/json; charset=utf-8',
             'X-Ovh-Application' => $this->application_key,
@@ -285,8 +285,18 @@ class Api
         }
 
         /** @var Response $response */
-        $response = $this->http_client->send($request, ['headers' => $headers]);
+        return $this->http_client->send($request, ['headers' => $headers]);
+    }
 
+    /**
+     * Decode a Response object body to an Array
+     *
+     * @param  Response $response
+     *
+     * @return array
+     */
+    private function decodeResponse(Response $response)
+    {
         return json_decode($response->getBody(), true);
     }
 
@@ -301,7 +311,9 @@ class Api
      */
     public function get($path, $content = null)
     {
-        return $this->rawCall("GET", $path, $content);
+        return $this->decodeResponse(
+            $this->rawCall("GET", $path, $content)
+        );
     }
 
     /**
@@ -315,7 +327,9 @@ class Api
      */
     public function post($path, $content = null)
     {
-        return $this->rawCall("POST", $path, $content);
+        return $this->decodeResponse(
+            $this->rawCall("POST", $path, $content)
+        );
     }
 
     /**
@@ -329,7 +343,9 @@ class Api
      */
     public function put($path, $content)
     {
-        return $this->rawCall("PUT", $path, $content);
+        return $this->decodeResponse(
+            $this->rawCall("PUT", $path, $content)
+        );
     }
 
     /**
@@ -343,7 +359,9 @@ class Api
      */
     public function delete($path, $content = null)
     {
-        return $this->rawCall("DELETE", $path, $content);
+        return $this->decodeResponse(
+            $this->rawCall("DELETE", $path, $content)
+        );
     }
 
     /**
