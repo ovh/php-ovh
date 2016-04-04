@@ -3,7 +3,10 @@
     "description": "Wrapper for OVH APIs",
     "license": "BSD-3-Clause",
     "require": {
-        "guzzlehttp/guzzle": "^6.0"
+        "guzzlehttp/psr7": "~1.2",
+        "php-http/httplug": "^1.0",
+        "php-http/client-implementation": "^1.0",
+        "php-http/discovery": "^0.8"
     },
     "autoload": {
         "psr-4": {"Ovh\\": "src/"}
@@ -12,6 +15,7 @@
         "phpunit/phpunit": "4.*",
         "phpdocumentor/phpdocumentor": "2.*",
         "squizlabs/php_codesniffer": "2.*",
-        "phing/phing": "^2.14"
+        "phing/phing": "^2.14",
+        "php-http/guzzle6-adapter": "^1.0"
     }
 }
