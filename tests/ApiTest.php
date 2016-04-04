@@ -27,6 +27,7 @@
 
 namespace Ovh\tests;
 
+use Http\Adapter\Guzzle6\Client as HttpClient;
 use GuzzleHttp\Client;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
@@ -76,7 +77,8 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->consumer_key       = 'consumer';
         $this->endpoint           = 'ovh-eu';
 
-        $this->client = new Client();
+        $this->guzzle = new Client();
+        $this->client = new HttpClient($this->guzzle);
     }
 
     /**
@@ -152,9 +154,8 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testClientCreation()
     {
-        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key);
-
-        $this->assertInstanceOf('\\GuzzleHttp\\Client', $api->getHttpClient());
+        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+        $this->assertInstanceOf('Http\\Client\\HttpClient', $api->getHttpClient());
     }
 
     /**
@@ -164,7 +165,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     {
         $delay = 10;
 
-        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack = $this->guzzle->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
             $body = $response->getBody();
@@ -191,7 +192,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testIfConsumerKeyIsReplace()
     {
-        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack = $this->guzzle->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
             $body = $response->getBody();
@@ -221,10 +222,10 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     public function testInvalidApplicationKey()
     {
         $this->setExpectedException(
-            '\GuzzleHttp\Exception\ClientException'
+            'Http\Client\Exception\HttpException'
         );
 
-        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack = $this->guzzle->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
             $body = $response->getBody();
@@ -254,10 +255,10 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     public function testInvalidRight()
     {
         $this->setExpectedException(
-            '\GuzzleHttp\Exception\ClientException'
+            'Http\Client\Exception\HttpException'
         );
 
-        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack = $this->guzzle->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
             $body = $response->getBody();
@@ -288,7 +289,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetQueryArgs()
     {
-        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack = $this->guzzle->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
             if($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
@@ -313,7 +314,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetOverlappingQueryArgs()
     {
-        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack = $this->guzzle->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
             if($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
@@ -338,7 +339,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetBooleanQueryArgs()
     {
-        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack = $this->guzzle->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
             if($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
