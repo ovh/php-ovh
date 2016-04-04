@@ -118,7 +118,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingApplicationKey()
     {
-        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Application key');
+        $this->setExpectedException('Ovh\Exceptions\InvalidParameterException', 'Application key');
         new Api(null, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
     }
 
@@ -127,7 +127,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingApplicationSecret()
     {
-        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Application secret');
+        $this->setExpectedException('Ovh\Exceptions\InvalidParameterException', 'Application secret');
         new Api($this->application_key, null, $this->endpoint, $this->consumer_key, $this->client);
     }
 
@@ -136,7 +136,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingApiEndpoint()
     {
-        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Endpoint');
+        $this->setExpectedException('Ovh\Exceptions\InvalidParameterException', 'Endpoint');
         new Api($this->application_key, $this->application_secret, null, $this->consumer_key, $this->client);
     }
 
@@ -145,7 +145,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadApiEndpoint()
     {
-        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Unknown');
+        $this->setExpectedException('Ovh\Exceptions\InvalidParameterException', 'Unknown');
         new Api($this->application_key, $this->application_secret, 'i_am_invalid', $this->consumer_key, $this->client);
     }
 
