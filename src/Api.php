@@ -30,9 +30,11 @@
 
 namespace Ovh;
 
-use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Http\Client\HttpClient;
+use Http\Message\MessageFactory;
 
 /**
  * Wrapper to manage login and exchanges with simpliest Ovh API
@@ -100,7 +102,7 @@ class Api
     /**
      * Contain http client connection
      *
-     * @var Client
+     * @var HttpClient
      */
     private $http_client = null;
 
@@ -114,7 +116,7 @@ class Api
      * @param string $api_endpoint       name of api selected
      * @param string $consumer_key       If you have already a consumer key, this parameter prevent to do a
      *                                   new authentication
-     * @param Client $http_client        instance of http client
+     * @param HttpClient $http_client        instance of http client
      *
      * @throws Exceptions\InvalidParameterException if one parameter is missing or with bad value
      */
@@ -123,7 +125,7 @@ class Api
         $application_secret,
         $api_endpoint,
         $consumer_key = null,
-        Client $http_client = null
+        HttpClient $http_client = null
     ) {
         if (!isset($application_key)) {
             throw new Exceptions\InvalidParameterException("Application key parameter is empty");
@@ -159,7 +161,7 @@ class Api
     /**
      * Calculate time delta between local machine and API's server
      *
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      * @return int
      */
     private function calculateTimeDelta()
@@ -186,7 +188,7 @@ class Api
      * @param string $redirection url to redirect on your website after authentication
      *
      * @return mixed
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function requestCredentials(
         array $accessRules,
@@ -221,7 +223,7 @@ class Api
      * @param bool                 $is_authenticated if the request use authentication
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     private function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null)
     {
@@ -309,7 +311,7 @@ class Api
      * @param array  $content content to send inside body of request
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function get($path, $content = null, $headers = null)
     {
@@ -325,7 +327,7 @@ class Api
      * @param array  $content content to send inside body of request
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function post($path, $content = null, $headers = null)
     {
@@ -341,7 +343,7 @@ class Api
      * @param array  $content content to send inside body of request
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function put($path, $content, $headers = null)
     {
@@ -357,7 +359,7 @@ class Api
      * @param array  $content content to send inside body of request
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function delete($path, $content = null, $headers = null)
     {
