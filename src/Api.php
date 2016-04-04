@@ -143,13 +143,6 @@ class Api
             throw new Exceptions\InvalidParameterException("Unknown provided endpoint");
         }
 
-        if (!isset($http_client)) {
-            $http_client = new Client([
-                'timeout'         => 30,
-                'connect_timeout' => 5,
-            ]);
-        }
-
         $this->application_key    = $application_key;
         $this->endpoint           = $this->endpoints[$api_endpoint];
         $this->application_secret = $application_secret;
