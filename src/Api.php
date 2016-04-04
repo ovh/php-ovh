@@ -37,6 +37,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\HttpClient;
 use Http\Message\MessageFactory;
+use Http\Discovery\HttpClientDiscovery;
 
 /**
  * Wrapper to manage login and exchanges with simpliest Ovh API
@@ -254,8 +255,7 @@ class Api
         } elseif (isset($content)) {
             $body = json_encode($content);
         }
-        if(!is_array($headers))
-        {
+        if (!is_array($headers)) {
             $headers = [];
         }
         $headers['Content-Type']      = 'application/json; charset=utf-8';
@@ -378,6 +378,10 @@ class Api
      */
     public function getHttpClient()
     {
+        if ($this->http_client === null) {
+            $this->http_client = HttpClientDiscovery::find();
+        }
+
         return $this->http_client;
     }
 
