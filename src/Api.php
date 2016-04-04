@@ -221,9 +221,11 @@ class Api
     private function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null)
     {
         $url     = $this->endpoint . $path;
-        $request = new Request($method, $url);
+        $uri = new Uri($url);
+        $body = null;
+
         if (isset($content) && $method == 'GET') {
-            $query_string = $request->getUri()->getQuery();
+            $query_string = $uri->getQuery();
 
             $query = array();
             if (!empty($query_string)) {
@@ -246,16 +248,9 @@ class Api
             }
 
             $query = \GuzzleHttp\Psr7\build_query($query);
-
-            $url     = $request->getUri()->withQuery($query);
-            $request = $request->withUri($url);
-            $body    = "";
+            $uri     = $uri->withQuery($query);
         } elseif (isset($content)) {
             $body = json_encode($content);
-
-            $request->getBody()->write($body);
-        } else {
-            $body = "";
         }
         if(!is_array($headers))
         {
@@ -281,8 +276,15 @@ class Api
             }
         }
 
+        $request = new Request(
+            $method,
+            $uri,
+            $headers,
+            $body
+        );
+
         /** @var Response $response */
-        return $this->http_client->send($request, ['headers' => $headers]);
+        return $this->getHttpClient()->sendRequest($request);
     }
 
     /**
