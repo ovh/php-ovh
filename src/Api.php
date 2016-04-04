@@ -30,6 +30,8 @@
 
 namespace Ovh;
 
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -276,15 +278,13 @@ class Api
             }
         }
 
-        $request = new Request(
+        /** @var ResponseInterface $response */
+        return $this->sendRequest(new Request(
             $method,
             $uri,
             $headers,
             $body
-        );
-
-        /** @var Response $response */
-        return $this->getHttpClient()->sendRequest($request);
+        ));
     }
 
     /**
@@ -377,5 +377,15 @@ class Api
     public function getHttpClient()
     {
         return $this->http_client;
+    }
+
+    /**
+     * Send the Request through the HttpClient
+     * @param  RequestInterface $request
+     * @return ResponseInterface
+     */
+    private function sendRequest(RequestInterface $request)
+    {
+        return $this->getHttpClient()->sendRequest($request);
     }
 }
