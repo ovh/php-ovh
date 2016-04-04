@@ -303,9 +303,6 @@ class ApiTest extends \PHPUnit_Framework_TestCase
                 ->withQuery(''));
             return $request;
         }));
-        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
-        //    return $response;
-        //}));
 
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $api->get('/me/api/credential?applicationId=49', ['status' => 'pendingValidation']);
@@ -331,9 +328,6 @@ class ApiTest extends \PHPUnit_Framework_TestCase
                 ->withQuery(''));
             return $request;
         }));
-        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
-        //    return $response;
-        //}));
 
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $api->get('/me/api/credential?applicationId=49&status=pendingValidation', ['status' => 'expired', 'test' => "success"]);
@@ -359,9 +353,6 @@ class ApiTest extends \PHPUnit_Framework_TestCase
                 ->withQuery(''));
             return $request;
         }));
-        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
-        //    return $response;
-        //}));
 
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $api->get('/me/api/credential', ['dryRun' => true, 'notDryRun' => false]);
