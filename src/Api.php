@@ -365,6 +365,7 @@ class Api
 
     /**
      * Get the current consumer key
+     * @return string
      */
     public function getConsumerKey()
     {
@@ -373,6 +374,7 @@ class Api
 
     /**
      * Return instance of http client
+     * @return HttpClient
      */
     public function getHttpClient()
     {
