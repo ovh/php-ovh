@@ -228,13 +228,12 @@ class Api
         $url     = $this->endpoint . $path;
         $request = new Request($method, $url);
         if (isset($content) && $method == 'GET') {
-
             $query_string = $request->getUri()->getQuery();
 
             $query = array();
             if (!empty($query_string)) {
                 $queries = explode('&', $query_string);
-                foreach($queries as $element) {
+                foreach ($queries as $element) {
                     $key_value_query = explode('=', $element, 2);
                     $query[$key_value_query[0]] = $key_value_query[1];
                 }
@@ -243,14 +242,10 @@ class Api
             $query = array_merge($query, (array)$content);
 
             // rewrite query args to properly dump true/false parameters
-            foreach($query as $key => $value)
-            {
-                if ($value === false)
-                {
+            foreach ($query as $key => $value) {
+                if ($value === false) {
                     $query[$key] = "false";
-                }
-                elseif ($value === true)
-                {
+                } elseif ($value === true) {
                     $query[$key] = "true";
                 }
             }
