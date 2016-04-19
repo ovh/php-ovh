@@ -27,7 +27,7 @@ Quickstart
 
 To download this wrapper and integrate it inside your PHP application, you can use [Composer](https://getcomposer.org).
 
-Add the repository in your **composer.json** file or, if you don't already have 
+Add the repository in your **composer.json** file or, if you don't already have
 this file, create it at the root of your project with this content:
 
 ```json
@@ -58,7 +58,7 @@ How to login as a user?
 
 To communicate with APIs, the SDK uses a token on each request to identify the
 user. This token is called *Consumer Key*. To have a validated *Consumer Key*,
-you need to redirect your user on specific authentication page. Once the user has 
+you need to redirect your user on specific authentication page. Once the user has
 logged in, the token is validated and user will be redirected on __$redirection__ url.
 
 ```php
@@ -173,11 +173,10 @@ you can install local npm project in a clone a project
     git clone https://github.com/ovh/php-ovh.git
     cd php-ovh
     php composer.phar install
-    npm install
 
 To generate documentation, it's possible to use directly:
 
-    grunt default
+    vendor/bin/phing phpdocs
 
 Documentation is available in docs/ directory.
 
@@ -190,12 +189,15 @@ local npm project in a clone a project
     git https://github.com/ovh/php-ovh.git
     cd php-ovh
     php composer.phar install
-    npm install
 
 Edit **phpunit.xml** file with your credentials to pass functionals tests. Then,
-you can run directly unit and functionals tests with grunt.
+you can run directly unit and functionals tests with [phing](http://www.phing.info/).
 
-    grunt
+    vendor/bin/phing test
+
+To skip functionals and run unit tests only, you can use the `only.units` option :
+
+    vendor/bin/phing test -Donly.units=true
 
 Supported APIs
 --------------
