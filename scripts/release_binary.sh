@@ -1,17 +1,38 @@
 #!/bin/bash
+#
+# This script is used to build and deploy the binary from the current version on github
+# Usage ./scripts/release_binary.sh <version> <githubUser> <githubToken>
+#
+
+set -e
 
 VERSION="$1"
 USER="$2"
 TOKEN="$3"
 
+if [ -z "$VERSION"  ];
+then
+  echo "Missing version" >&2
+  exit 1
+fi
+
+if  [ -z "$USER" ];
+then
+  echo "Missing github user" >&2
+  exit 1
+fi
+
+if  [ -z "$TOKEN" ];
+then
+  echo "Missing github token" >&2
+  exit 1
+fi
+
 cd /tmp
-mkdir php-ovh-bin
+mkdir -p php-ovh-bin
 cd php-ovh-bin
 
-php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php
-php -r "if (hash('SHA384', file_get_contents('composer-setup.php')) === '7228c001f88bee97506740ef0888240bd8a760b046ee16db8f4095c0d8d525f2367663f22a46b48d072c816e7fe19959') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-php composer-setup.php
-php -r "unlink('composer-setup.php');"
+curl -sS https://getcomposer.org/installer | php
 
 echo '{
     "name": "Example Application",
