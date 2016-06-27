@@ -162,7 +162,41 @@ $webHosting = $conn->get('/hosting/web/');
 
 foreach ($webHosting as $webHosting) {
         echo "One of our web hosting: " . $webHosting . "\n";
+}
+?>
 ```
+
+How to print API error details?
+-------------------------------
+
+Under the hood, ```php-ovh``` uses [GuzzlePHP 6](http://docs.guzzlephp.org/en/latest/quickstart.html) by default to issue API requests. If everything goes well, it will return the response directly as shown in the examples above. If there is an error like a missing endpoint or object (404), an authentication or authorization error (401 or 403) or a parameter error, the Guzzle will raise a ``GuzzleHttp\Exception\ClientException`` exception. For server-side errors (5xx), it will raise a ``GuzzleHttp\Exception\ServerException`` exception.
+
+You can get the error details with a code like:
+
+```php
+<?php
+/**
+ * # Instantiate. Visit https://api.ovh.com/createToken/index.cgi?GET=/me
+ * to get your credentials
+ */
+require __DIR__ . '/vendor/autoload.php';
+use \Ovh\Api;
+
+$ovh = new Api( $applicationKey,
+                $applicationSecret,
+                $endpoint,
+                $consumer_key);
+
+try {
+    echo "Welcome " . $ovh->get('/me')['firstname'];
+} catch (GuzzleHttp\Exception\ClientException $e) {
+    $response = $e->getResponse();
+    $responseBodyAsString = $response->getBody()->getContents();
+    echo $responseBodyAsString;
+}
+?>
+```
+
 
 How to build the documentation?
 -------------------------------
