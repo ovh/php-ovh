@@ -53,7 +53,7 @@ class Api
      * @var array
      */
     private $endpoints = [
-        'ovh-eu'        => 'https://api.ovh.com/1.0',
+        'ovh-eu'        => 'https://eu.api.ovh.com/1.0',
         'ovh-ca'        => 'https://ca.api.ovh.com/1.0',
         'kimsufi-eu'    => 'https://eu.api.kimsufi.com/1.0',
         'kimsufi-ca'    => 'https://ca.api.kimsufi.com/1.0',
@@ -223,7 +223,7 @@ class Api
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    private function rawCall($method, $path, $content = null, $is_authenticated = true)
+    private function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null)
     {
         $url     = $this->endpoint . $path;
         $request = new Request($method, $url);
@@ -262,10 +262,12 @@ class Api
         } else {
             $body = "";
         }
-        $headers = [
-            'Content-Type'      => 'application/json; charset=utf-8',
-            'X-Ovh-Application' => $this->application_key,
-        ];
+        if(!is_array($headers))
+        {
+            $headers = [];
+        }
+        $headers['Content-Type']      = 'application/json; charset=utf-8';
+        $headers['X-Ovh-Application'] = $this->application_key;
 
         if ($is_authenticated) {
             if (!isset($this->time_delta)) {
@@ -309,10 +311,10 @@ class Api
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    public function get($path, $content = null)
+    public function get($path, $content = null, $headers = null)
     {
         return $this->decodeResponse(
-            $this->rawCall("GET", $path, $content)
+            $this->rawCall("GET", $path, $content, true, $headers)
         );
     }
 
@@ -325,10 +327,10 @@ class Api
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    public function post($path, $content = null)
+    public function post($path, $content = null, $headers = null)
     {
         return $this->decodeResponse(
-            $this->rawCall("POST", $path, $content)
+            $this->rawCall("POST", $path, $content, true, $headers)
         );
     }
 
@@ -341,10 +343,10 @@ class Api
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    public function put($path, $content)
+    public function put($path, $content, $headers = null)
     {
         return $this->decodeResponse(
-            $this->rawCall("PUT", $path, $content)
+            $this->rawCall("PUT", $path, $content, true, $headers)
         );
     }
 
@@ -357,10 +359,10 @@ class Api
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    public function delete($path, $content = null)
+    public function delete($path, $content = null, $headers = null)
     {
         return $this->decodeResponse(
-            $this->rawCall("DELETE", $path, $content)
+            $this->rawCall("DELETE", $path, $content, true, $headers)
         );
     }
 
