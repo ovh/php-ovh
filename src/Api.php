@@ -125,14 +125,6 @@ class Api
         $consumer_key = null,
         Client $http_client = null
     ) {
-        if (!isset($application_key)) {
-            throw new Exceptions\InvalidParameterException("Application key parameter is empty");
-        }
-
-        if (!isset($application_secret)) {
-            throw new Exceptions\InvalidParameterException("Application secret parameter is empty");
-        }
-
         if (!isset($api_endpoint)) {
             throw new Exceptions\InvalidParameterException("Endpoint parameter is empty");
         }
@@ -225,6 +217,17 @@ class Api
      */
     private function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null)
     {
+        if ( $is_authenticated )
+        {
+            if (!isset($this->application_key)) {
+                throw new Exceptions\InvalidParameterException("Application key parameter is empty");
+            }
+
+            if (!isset($this->application_secret)) {
+                throw new Exceptions\InvalidParameterException("Application secret parameter is empty");
+            }
+        }
+
         $url     = $this->endpoint . $path;
         $request = new Request($method, $url);
         if (isset($content) && $method == 'GET') {
@@ -267,9 +270,11 @@ class Api
             $headers = [];
         }
         $headers['Content-Type']      = 'application/json; charset=utf-8';
-        $headers['X-Ovh-Application'] = $this->application_key;
 
         if ($is_authenticated) {
+
+            $headers['X-Ovh-Application'] = $this->application_key;
+
             if (!isset($this->time_delta)) {
                 $this->calculateTimeDelta();
             }
@@ -307,14 +312,16 @@ class Api
      *
      * @param string $path    path ask inside api
      * @param array  $content content to send inside body of request
+     * @param array  headers  custom HTTP headers to add on the request
+     * @param bool   is_authenticated   if the request need to be authenticated
      *
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    public function get($path, $content = null, $headers = null)
+    public function get($path, $content = null, $headers = null, $is_authenticated = true)
     {
         return $this->decodeResponse(
-            $this->rawCall("GET", $path, $content, true, $headers)
+            $this->rawCall("GET", $path, $content, $is_authenticated, $headers)
         );
     }
 
@@ -323,14 +330,16 @@ class Api
      *
      * @param string $path    path ask inside api
      * @param array  $content content to send inside body of request
+     * @param array  headers  custom HTTP headers to add on the request
+     * @param bool   is_authenticated   if the request need to be authenticated
      *
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    public function post($path, $content = null, $headers = null)
+    public function post($path, $content = null, $headers = null, $is_authenticated = true)
     {
         return $this->decodeResponse(
-            $this->rawCall("POST", $path, $content, true, $headers)
+            $this->rawCall("POST", $path, $content, $is_authenticated, $headers)
         );
     }
 
@@ -339,14 +348,16 @@ class Api
      *
      * @param string $path    path ask inside api
      * @param array  $content content to send inside body of request
+     * @param array  headers  custom HTTP headers to add on the request
+     * @param bool   is_authenticated   if the request need to be authenticated
      *
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    public function put($path, $content, $headers = null)
+    public function put($path, $content, $headers = null, $is_authenticated = true)
     {
         return $this->decodeResponse(
-            $this->rawCall("PUT", $path, $content, true, $headers)
+            $this->rawCall("PUT", $path, $content, $is_authenticated, $headers)
         );
     }
 
@@ -355,14 +366,16 @@ class Api
      *
      * @param string $path    path ask inside api
      * @param array  $content content to send inside body of request
+     * @param array  headers  custom HTTP headers to add on the request
+     * @param bool   is_authenticated   if the request need to be authenticated
      *
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    public function delete($path, $content = null, $headers = null)
+    public function delete($path, $content = null, $headers = null, $is_authenticated = true)
     {
         return $this->decodeResponse(
-            $this->rawCall("DELETE", $path, $content, true, $headers)
+            $this->rawCall("DELETE", $path, $content, $is_authenticated, $headers)
         );
     }
 

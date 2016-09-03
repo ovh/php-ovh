@@ -250,4 +250,13 @@ class ApiFunctionalTest extends \PHPUnit_Framework_TestCase
     {
         $this->api->get('/me/api/credential', ['status' => 'pendingValidation']);
     }
+
+    /**
+     * Test APi::get without authentication
+     */
+    public function testApiGetWithoutAuthentication()
+    {
+        $api = new Api(NULL,NULL, $this->endpoint, null, $this->client);
+        $api->get('/hosting/web/moduleList');
+    }
 }
