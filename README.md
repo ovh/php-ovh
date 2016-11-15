@@ -27,7 +27,11 @@ Quickstart
 
 To download this wrapper and integrate it inside your PHP application, you can use [Composer](https://getcomposer.org).
 
-Add the repository in your **composer.json** file or, if you don't already have
+Quick integration with the following command:
+
+    composer require ovh/ovh
+
+Or add the repository in your **composer.json** file or, if you don't already have
 this file, create it at the root of your project with this content:
 
 ```json
