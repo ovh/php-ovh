@@ -30,9 +30,14 @@
 
 namespace Ovh;
 
-use GuzzleHttp\Client;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Http\Client\HttpClient;
+use Http\Message\MessageFactory;
+use Http\Discovery\HttpClientDiscovery;
 
 /**
  * Wrapper to manage login and exchanges with simpliest Ovh API
@@ -100,7 +105,7 @@ class Api
     /**
      * Contain http client connection
      *
-     * @var Client
+     * @var HttpClient
      */
     private $http_client = null;
 
@@ -114,7 +119,7 @@ class Api
      * @param string $api_endpoint       name of api selected
      * @param string $consumer_key       If you have already a consumer key, this parameter prevent to do a
      *                                   new authentication
-     * @param Client $http_client        instance of http client
+     * @param HttpClient $http_client        instance of http client
      *
      * @throws Exceptions\InvalidParameterException if one parameter is missing or with bad value
      */
@@ -123,7 +128,7 @@ class Api
         $application_secret,
         $api_endpoint,
         $consumer_key = null,
-        Client $http_client = null
+        HttpClient $http_client = null
     ) {
         if (!isset($application_key)) {
             throw new Exceptions\InvalidParameterException("Application key parameter is empty");
@@ -141,13 +146,6 @@ class Api
             throw new Exceptions\InvalidParameterException("Unknown provided endpoint");
         }
 
-        if (!isset($http_client)) {
-            $http_client = new Client([
-                'timeout'         => 30,
-                'connect_timeout' => 5,
-            ]);
-        }
-
         $this->application_key    = $application_key;
         $this->endpoint           = $this->endpoints[$api_endpoint];
         $this->application_secret = $application_secret;
@@ -159,7 +157,7 @@ class Api
     /**
      * Calculate time delta between local machine and API's server
      *
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      * @return int
      */
     private function calculateTimeDelta()
@@ -186,7 +184,7 @@ class Api
      * @param string $redirection url to redirect on your website after authentication
      *
      * @return mixed
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function requestCredentials(
         array $accessRules,
@@ -221,14 +219,16 @@ class Api
      * @param bool                 $is_authenticated if the request use authentication
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     private function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null)
     {
         $url     = $this->endpoint . $path;
-        $request = new Request($method, $url);
+        $uri = new Uri($url);
+        $body = null;
+
         if (isset($content) && $method == 'GET') {
-            $query_string = $request->getUri()->getQuery();
+            $query_string = $uri->getQuery();
 
             $query = array();
             if (!empty($query_string)) {
@@ -251,19 +251,11 @@ class Api
             }
 
             $query = \GuzzleHttp\Psr7\build_query($query);
-
-            $url     = $request->getUri()->withQuery($query);
-            $request = $request->withUri($url);
-            $body    = "";
+            $uri     = $uri->withQuery($query);
         } elseif (isset($content)) {
             $body = json_encode($content);
-
-            $request->getBody()->write($body);
-        } else {
-            $body = "";
         }
-        if(!is_array($headers))
-        {
+        if (!is_array($headers)) {
             $headers = [];
         }
         $headers['Content-Type']      = 'application/json; charset=utf-8';
@@ -286,8 +278,13 @@ class Api
             }
         }
 
-        /** @var Response $response */
-        return $this->http_client->send($request, ['headers' => $headers]);
+        /** @var ResponseInterface $response */
+        return $this->sendRequest(new Request(
+            $method,
+            $uri,
+            $headers,
+            $body
+        ));
     }
 
     /**
@@ -309,7 +306,7 @@ class Api
      * @param array  $content content to send inside body of request
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function get($path, $content = null, $headers = null)
     {
@@ -325,7 +322,7 @@ class Api
      * @param array  $content content to send inside body of request
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function post($path, $content = null, $headers = null)
     {
@@ -341,7 +338,7 @@ class Api
      * @param array  $content content to send inside body of request
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function put($path, $content, $headers = null)
     {
@@ -357,7 +354,7 @@ class Api
      * @param array  $content content to send inside body of request
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws \Http\Exception\TransferException if http request is an error
      */
     public function delete($path, $content = null, $headers = null)
     {
@@ -368,6 +365,7 @@ class Api
 
     /**
      * Get the current consumer key
+     * @return string
      */
     public function getConsumerKey()
     {
@@ -376,9 +374,24 @@ class Api
 
     /**
      * Return instance of http client
+     * @return HttpClient
      */
     public function getHttpClient()
     {
+        if ($this->http_client === null) {
+            $this->http_client = HttpClientDiscovery::find();
+        }
+
         return $this->http_client;
+    }
+
+    /**
+     * Send the Request through the HttpClient
+     * @param  RequestInterface $request
+     * @return ResponseInterface
+     */
+    private function sendRequest(RequestInterface $request)
+    {
+        return $this->getHttpClient()->sendRequest($request);
     }
 }
