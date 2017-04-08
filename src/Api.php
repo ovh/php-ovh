@@ -256,7 +256,7 @@ class Api
             $request = $request->withUri($url);
             $body    = "";
         } elseif (isset($content)) {
-            $body = json_encode($content);
+            $body = json_encode($content, JSON_UNESCAPED_SLASHES);
 
             $request->getBody()->write($body);
         } else {
