@@ -18,14 +18,14 @@ MultiDomains and SubDomains features are merged into one feature called **Attach
 - Download the latest release **with dependencies** on github: https://github.com/ovh/php-ovh/releases
 
 ```bash
-# When this article was written, latest version was 2.0.0
-wget https://github.com/ovh/php-ovh/releases/download/v2.0.0/php-ovh-2.0.0-with-dependencies.tar.gz
+# When this article was written, latest version was 2.0.1
+wget https://github.com/ovh/php-ovh/releases/download/v2.0.1/php-ovh-2.0.1-with-dependencies.tar.gz
 ```
 
 - Extract it
 
 ```bash
-tar xzvf php-ovh-2.0.0-with-dependencies.tar.gz 
+tar xzvf php-ovh-2.0.1-with-dependencies.tar.gz 
 ```
 
 ## Create a new token
