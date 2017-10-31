@@ -223,7 +223,7 @@ class Api
      * @return array
      * @throws \GuzzleHttp\Exception\ClientException if http request is an error
      */
-    private function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null)
+    protected function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null)
     {
         $url     = $this->endpoint . $path;
         $request = new Request($method, $url);
