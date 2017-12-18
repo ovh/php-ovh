@@ -137,8 +137,19 @@ class Api
             throw new Exceptions\InvalidParameterException("Endpoint parameter is empty");
         }
 
-        if (!array_key_exists($api_endpoint, $this->endpoints)) {
-            throw new Exceptions\InvalidParameterException("Unknown provided endpoint");
+        if (preg_match('/^https?:\/\/..*/',$api_endpoint))
+        {
+          $this->endpoint         = $api_endpoint;
+        }
+        else
+        {
+          if (!array_key_exists($api_endpoint, $this->endpoints)) {
+              throw new Exceptions\InvalidParameterException("Unknown provided endpoint");
+          }
+          else
+          {
+            $this->endpoint       = $this->endpoints[$api_endpoint];
+          }
         }
 
         if (!isset($http_client)) {
@@ -149,7 +160,6 @@ class Api
         }
 
         $this->application_key    = $application_key;
-        $this->endpoint           = $this->endpoints[$api_endpoint];
         $this->application_secret = $application_secret;
         $this->http_client        = $http_client;
         $this->consumer_key       = $consumer_key;
