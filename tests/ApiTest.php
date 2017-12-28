@@ -367,4 +367,106 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $api->get('/me/api/credential', ['dryRun' => true, 'notDryRun' => false]);
     }
 
+    /**
+     * Test valid predefined endpoint
+     */
+    public function testPredefinedEndPoint()
+    {
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapRequest(function (Request $request) {
+            if($request->getUri()->getPath() == "/1.0/auth/time") {
+                return $request;
+            }
+
+            $host = $request->getUri()->getHost();
+            $this->assertEquals($host, 'ca.api.ovh.com');
+
+            $resource = $request->getUri()->getPath();
+            $this->assertEquals($resource, '/1.0/me/api/credential');
+
+            $resource = $request->getUri()->getScheme();
+            $this->assertEquals($resource, 'https');
+
+            $request = $request->withUri($request->getUri()
+                ->withHost('httpbin.org')
+                ->withPath('/')
+                ->withQuery(''));
+            return $request;
+        }));
+        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
+        //    return $response;
+        //}));
+
+        $api = new Api($this->application_key, $this->application_secret, 'ovh-ca', $this->consumer_key, $this->client);
+        $api->get('/me/api/credential');
+    }
+
+    /**
+     * Test valid provided HTTP endpoint
+     */
+    public function testProvidedHttpEndPoint()
+    {
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapRequest(function (Request $request) {
+            if($request->getUri()->getPath() == "/1.0/auth/time") {
+                return $request;
+            }
+
+            $host = $request->getUri()->getHost();
+            $this->assertEquals($host, 'api.ovh.com');
+
+            $resource = $request->getUri()->getPath();
+            $this->assertEquals($resource, '/1.0/me/api/credential');
+
+            $resource = $request->getUri()->getScheme();
+            $this->assertEquals($resource, 'http');
+
+            $request = $request->withUri($request->getUri()
+                ->withHost('httpbin.org')
+                ->withPath('/')
+                ->withQuery(''));
+            return $request;
+        }));
+        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
+        //    return $response;
+        //}));
+
+        $api = new Api($this->application_key, $this->application_secret, 'http://api.ovh.com/1.0', $this->consumer_key, $this->client);
+        $api->get('/me/api/credential');
+    }
+
+    /**
+     * Test valid provided HTTPS endpoint
+     */
+    public function testProvidedHttpsEndPoint()
+    {
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapRequest(function (Request $request) {
+            if($request->getUri()->getPath() == "/1.0/auth/time") {
+                return $request;
+            }
+
+            $host = $request->getUri()->getHost();
+            $this->assertEquals($host, 'api.ovh.com');
+
+            $resource = $request->getUri()->getPath();
+            $this->assertEquals($resource, '/1.0/me/api/credential');
+
+            $resource = $request->getUri()->getScheme();
+            $this->assertEquals($resource, 'https');
+
+            $request = $request->withUri($request->getUri()
+                ->withHost('httpbin.org')
+                ->withPath('/')
+                ->withQuery(''));
+            return $request;
+        }));
+        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
+        //    return $response;
+        //}));
+
+        $api = new Api($this->application_key, $this->application_secret, 'https://api.ovh.com/1.0', $this->consumer_key, $this->client);
+        $api->get('/me/api/credential');
+    }
+
 }
