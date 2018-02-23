@@ -257,6 +257,6 @@ class ApiFunctionalTest extends \PHPUnit_Framework_TestCase
     public function testApiGetWithoutAuthentication()
     {
         $api = new Api(NULL,NULL, $this->endpoint, null, $this->client);
-        $api->get('/hosting/web/moduleList');
+        $api->get('/hosting/web/moduleList',null,null,false);
     }
 }

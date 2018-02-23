@@ -331,9 +331,19 @@ class Api
      */
     public function get($path, $content = null, $headers = null, $is_authenticated = true)
     {
-        return $this->decodeResponse(
-            $this->rawCall("GET", $path, $content, $is_authenticated, $headers)
-        );
+        if(preg_match('/^\/[^\/]+\.json$/', $path))
+        {
+          // Schema description must be access without authentication
+          return $this->decodeResponse(
+              $this->rawCall("GET", $path, $content, false, $headers)
+          );
+        }
+        else
+        {
+          return $this->decodeResponse(
+              $this->rawCall("GET", $path, $content, $is_authenticated, $headers)
+          );
+        }
     }
 
     /**
