@@ -40,7 +40,7 @@ try {
 			// If record include A, AAAA or CNAME for subdomain asked, we delete it
 			if ( in_array( $record['fieldType'], array( 'A', 'AAAA', 'CNAME' ) ) ) {
 
-				echo "We will delete field " . $record['fieldType'] . " for " . $record['subDomain'] . $record['zone'] . PHP_EOL;
+				echo "We will delete field " . $record['fieldType'] . " for " . $record['subDomain'] . "." . $record['zone'] . PHP_EOL;
 				$conn->delete('/domain/zone/' . $domain . '/record/' . $recordId);
 			}
 		}
