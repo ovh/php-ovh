@@ -205,7 +205,8 @@ class Api
                 'POST',
                 '/auth/credential',
                 $parameters,
-                false
+                false,
+                ['X-Ovh-Application' => $this->application_key]
             )
         );
 
