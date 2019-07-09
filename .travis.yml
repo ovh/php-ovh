@@ -5,11 +5,11 @@ addons:
 
 language: php
 php:
-  - hhvm
+  - 7.3
+  - 7.2
+  - 7.1
   - 7.0
   - 5.6
-  - 5.5
-  - 7.0
 
 before_script:
   - composer self-update
