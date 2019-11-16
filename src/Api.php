@@ -205,7 +205,7 @@ class Api
                 'POST',
                 '/auth/credential',
                 $parameters,
-                false
+                true
             )
         );
 

@@ -492,4 +492,32 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $api->get('/me/api/credential');
     }
 
+    /**
+     * Test missing header X-OVH-Application on requestCredentials
+     */
+    public function testMissingOvhApplicationHeaderOnRequestCredentials()
+    {
+        $handlerStack = $this->client->getConfig('handler');
+        $handlerStack->push(Middleware::mapRequest(function (Request $request) {
+            if($request->getUri()->getPath() == "/1.0/auth/time") {
+                return $request;
+            }
+
+            $ovhApplication = $request->getHeader('X-OVH-Application');
+            $this->assertNotNull($ovhApplication);
+            $this->assertEquals($ovhApplication, array($this->application_key));
+
+            $request = $request->withUri($request->getUri()
+                ->withHost('httpbin.org')
+                ->withPath('/')
+                ->withQuery(''));
+            return $request;
+        }));
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+            return $response->withStatus(200);
+        }));
+
+        $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
+        $api->requestCredentials([]);
+    }
 }
