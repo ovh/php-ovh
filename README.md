@@ -224,7 +224,7 @@ How to run tests?
 Tests are based on phpunit. To install it with other quality tools, you can install
 local npm project in a clone a project
 
-    git https://github.com/ovh/php-ovh.git
+    git clone https://github.com/ovh/php-ovh.git
     cd php-ovh
     php composer.phar install
 
