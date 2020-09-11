@@ -3,7 +3,7 @@
     "description": "Wrapper for OVH APIs",
     "license": "BSD-3-Clause",
     "require": {
-        "guzzlehttp/guzzle": "^6.0"
+        "guzzlehttp/guzzle": "^6.0 | ^7.0"
     },
     "autoload": {
         "psr-4": {"Ovh\\": "src/"}
