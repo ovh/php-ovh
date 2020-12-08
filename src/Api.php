@@ -130,19 +130,14 @@ class Api
             throw new Exceptions\InvalidParameterException("Endpoint parameter is empty");
         }
 
-        if (preg_match('/^https?:\/\/..*/',$api_endpoint))
-        {
-          $this->endpoint         = $api_endpoint;
-        }
-        else
-        {
-          if (!array_key_exists($api_endpoint, $this->endpoints)) {
-              throw new Exceptions\InvalidParameterException("Unknown provided endpoint");
-          }
-          else
-          {
-            $this->endpoint       = $this->endpoints[$api_endpoint];
-          }
+        if (preg_match('/^https?:\/\/..*/', $api_endpoint)) {
+            $this->endpoint         = $api_endpoint;
+        } else {
+            if (!array_key_exists($api_endpoint, $this->endpoints)) {
+                throw new Exceptions\InvalidParameterException("Unknown provided endpoint");
+            } else {
+                $this->endpoint       = $this->endpoints[$api_endpoint];
+            }
         }
 
         if (!isset($http_client)) {
@@ -228,8 +223,7 @@ class Api
      */
     protected function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null)
     {
-        if ( $is_authenticated )
-        {
+        if ($is_authenticated) {
             if (!isset($this->application_key)) {
                 throw new Exceptions\InvalidParameterException("Application key parameter is empty");
             }
@@ -276,14 +270,12 @@ class Api
         } else {
             $body = "";
         }
-        if(!is_array($headers))
-        {
+        if (!is_array($headers)) {
             $headers = [];
         }
         $headers['Content-Type']      = 'application/json; charset=utf-8';
 
         if ($is_authenticated) {
-
             $headers['X-Ovh-Application'] = $this->application_key;
 
             if (!isset($this->time_delta)) {
@@ -331,18 +323,15 @@ class Api
      */
     public function get($path, $content = null, $headers = null, $is_authenticated = true)
     {
-        if(preg_match('/^\/[^\/]+\.json$/', $path))
-        {
-          // Schema description must be access without authentication
-          return $this->decodeResponse(
-              $this->rawCall("GET", $path, $content, false, $headers)
-          );
-        }
-        else
-        {
-          return $this->decodeResponse(
-              $this->rawCall("GET", $path, $content, $is_authenticated, $headers)
-          );
+        if (preg_match('/^\/[^\/]+\.json$/', $path)) {
+            // Schema description must be access without authentication
+            return $this->decodeResponse(
+                $this->rawCall("GET", $path, $content, false, $headers)
+            );
+        } else {
+            return $this->decodeResponse(
+                $this->rawCall("GET", $path, $content, $is_authenticated, $headers)
+            );
         }
     }
 
