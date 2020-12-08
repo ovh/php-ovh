@@ -28,10 +28,13 @@
 namespace Ovh\tests;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
 use Ovh\Api;
+use Ovh\Exceptions\InvalidParameterException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Api class
@@ -39,7 +42,7 @@ use Ovh\Api;
  * @package  Ovh
  * @category Ovh
  */
-class ApiTest extends \PHPUnit_Framework_TestCase
+class ApiTest extends TestCase
 {
     /**
      * @var Client
@@ -69,7 +72,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     /**
      * Define id to create object
      */
-    protected function setUp()
+    protected function setUp() :void
     {
         $this->application_key    = 'app_key';
         $this->application_secret = 'app_secret';
@@ -116,7 +119,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingApplicationKey()
     {
-        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Application key');
+        $this->expectException(InvalidParameterException::class);
         $api = new Api(null, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $api->get('/me');
     }
@@ -126,7 +129,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingApplicationSecret()
     {
-        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Application secret');
+        $this->expectException(InvalidParameterException::class);
         $api = new Api($this->application_key, null, $this->endpoint, $this->consumer_key, $this->client);
         $api->get('/me');
     }
@@ -157,7 +160,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingApiEndpoint()
     {
-        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Endpoint');
+        $this->expectException(InvalidParameterException::class);
         new Api($this->application_key, $this->application_secret, null, $this->consumer_key, $this->client);
     }
 
@@ -166,7 +169,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadApiEndpoint()
     {
-        $this->setExpectedException('\\Ovh\\Exceptions\\InvalidParameterException', 'Unknown');
+        $this->expectException(InvalidParameterException::class);
         new Api($this->application_key, $this->application_secret, 'i_am_invalid', $this->consumer_key, $this->client);
     }
 
@@ -243,9 +246,8 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidApplicationKey()
     {
-        $this->setExpectedException(
-            '\GuzzleHttp\Exception\ClientException'
-        );
+
+        $this->expectException(ClientException::class);
 
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
@@ -276,9 +278,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidRight()
     {
-        $this->setExpectedException(
-            '\GuzzleHttp\Exception\ClientException'
-        );
+        $this->expectException(ClientException::class);
 
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
