@@ -31,8 +31,11 @@
 namespace Ovh;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Wrapper to manage login and exchanges with simpliest Ovh API
@@ -68,42 +71,42 @@ class Api
      *
      * @var string
      */
-    private $endpoint = null;
+    private ?string $endpoint;
 
     /**
      * Contain key of the current application
      *
      * @var string
      */
-    private $application_key = null;
+    private ?string $application_key;
 
     /**
      * Contain secret of the current application
      *
      * @var string
      */
-    private $application_secret = null;
+    private ?string $application_secret;
 
     /**
      * Contain consumer key of the current application
      *
      * @var string
      */
-    private $consumer_key = null;
+    private ?string $consumer_key;
 
     /**
      * Contain delta between local timestamp and api server timestamp
      *
      * @var string
      */
-    private $time_delta = null;
+    private ?string $time_delta;
 
     /**
      * Contain http client connection
      *
      * @var Client
      */
-    private $http_client = null;
+    private ?Client $http_client;
 
     /**
      * Construct a new wrapper instance
@@ -135,9 +138,9 @@ class Api
         } else {
             if (!array_key_exists($api_endpoint, $this->endpoints)) {
                 throw new Exceptions\InvalidParameterException("Unknown provided endpoint");
-            } else {
-                $this->endpoint       = $this->endpoints[$api_endpoint];
             }
+
+            $this->endpoint       = $this->endpoints[$api_endpoint];
         }
 
         if (!isset($http_client)) {
@@ -151,13 +154,12 @@ class Api
         $this->application_secret = $application_secret;
         $this->http_client        = $http_client;
         $this->consumer_key       = $consumer_key;
-        $this->time_delta         = null;
     }
 
     /**
      * Calculate time delta between local machine and API's server
      *
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws ClientException if http request is an error
      * @return int
      */
     private function calculateTimeDelta()
@@ -184,7 +186,7 @@ class Api
      * @param string $redirection url to redirect on your website after authentication
      *
      * @return mixed
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws ClientException if http request is an error
      */
     public function requestCredentials(
         array $accessRules,
@@ -213,15 +215,18 @@ class Api
      * This is the main method of this wrapper. It will
      * sign a given query and return its result.
      *
-     * @param string               $method           HTTP method of request (GET,POST,PUT,DELETE)
-     * @param string               $path             relative url of API request
-     * @param \stdClass|array|null $content          body of the request
-     * @param bool                 $is_authenticated if the request use authentication
+     * @param string $method HTTP method of request (GET,POST,PUT,DELETE)
+     * @param string $path relative url of API request
+     * @param \stdClass|array|null $content body of the request
+     * @param bool $is_authenticated if the request use authentication
      *
-     * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @param null $headers
+     * @return ResponseInterface
+     * @throws Exceptions\InvalidParameterException
+     * @throws GuzzleException
+     * @throws \JsonException
      */
-    protected function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null)
+    protected function rawCall($method, $path, $content = null, $is_authenticated = true, $headers = null): ResponseInterface
     {
         if ($is_authenticated) {
             if (!isset($this->application_key)) {
@@ -235,7 +240,7 @@ class Api
 
         $url     = $this->endpoint . $path;
         $request = new Request($method, $url);
-        if (isset($content) && $method == 'GET') {
+        if (isset($content) && $method === 'GET') {
             $query_string = $request->getUri()->getQuery();
 
             $query = array();
@@ -264,7 +269,7 @@ class Api
             $request = $request->withUri($url);
             $body    = "";
         } elseif (isset($content)) {
-            $body = json_encode($content, JSON_UNESCAPED_SLASHES);
+            $body = json_encode($content, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
 
             $request->getBody()->write($body);
         } else {
@@ -301,38 +306,40 @@ class Api
     /**
      * Decode a Response object body to an Array
      *
-     * @param  Response $response
+     * @param Response $response
      *
      * @return array
+     * @throws \JsonException
      */
-    private function decodeResponse(Response $response)
+    private function decodeResponse(Response $response): array
     {
-        return json_decode($response->getBody(), true);
+        return json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
      * Wrap call to Ovh APIs for GET requests
      *
-     * @param string $path    path ask inside api
-     * @param array  $content content to send inside body of request
+     * @param string $path path ask inside api
+     * @param array $content content to send inside body of request
      * @param array  headers  custom HTTP headers to add on the request
      * @param bool   is_authenticated   if the request need to be authenticated
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws ClientException if http request is an error
+     * @throws \JsonException
      */
-    public function get($path, $content = null, $headers = null, $is_authenticated = true)
+    public function get($path, $content = null, $headers = null, $is_authenticated = true): array
     {
         if (preg_match('/^\/[^\/]+\.json$/', $path)) {
             // Schema description must be access without authentication
             return $this->decodeResponse(
                 $this->rawCall("GET", $path, $content, false, $headers)
             );
-        } else {
-            return $this->decodeResponse(
-                $this->rawCall("GET", $path, $content, $is_authenticated, $headers)
-            );
         }
+
+        return $this->decodeResponse(
+            $this->rawCall("GET", $path, $content, $is_authenticated, $headers)
+        );
     }
 
     /**
@@ -344,9 +351,9 @@ class Api
      * @param bool   is_authenticated   if the request need to be authenticated
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws ClientException if http request is an error
      */
-    public function post($path, $content = null, $headers = null, $is_authenticated = true)
+    public function post($path, $content = null, $headers = null, $is_authenticated = true): array
     {
         return $this->decodeResponse(
             $this->rawCall("POST", $path, $content, $is_authenticated, $headers)
@@ -362,9 +369,9 @@ class Api
      * @param bool   is_authenticated   if the request need to be authenticated
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws ClientException if http request is an error
      */
-    public function put($path, $content, $headers = null, $is_authenticated = true)
+    public function put($path, $content, $headers = null, $is_authenticated = true): array
     {
         return $this->decodeResponse(
             $this->rawCall("PUT", $path, $content, $is_authenticated, $headers)
@@ -380,9 +387,9 @@ class Api
      * @param bool   is_authenticated   if the request need to be authenticated
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\ClientException if http request is an error
+     * @throws ClientException if http request is an error
      */
-    public function delete($path, $content = null, $headers = null, $is_authenticated = true)
+    public function delete($path, $content = null, $headers = null, $is_authenticated = true): array
     {
         return $this->decodeResponse(
             $this->rawCall("DELETE", $path, $content, $is_authenticated, $headers)
@@ -392,7 +399,7 @@ class Api
     /**
      * Get the current consumer key
      */
-    public function getConsumerKey()
+    public function getConsumerKey(): ?string
     {
         return $this->consumer_key;
     }
@@ -400,7 +407,7 @@ class Api
     /**
      * Return instance of http client
      */
-    public function getHttpClient()
+    public function getHttpClient(): ?Client
     {
         return $this->http_client;
     }
