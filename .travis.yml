@@ -11,4 +11,4 @@ before_script:
   - composer self-update
   - composer install
 
-script: vendor/bin/phpunit
+script: vendor/bin/phpunit tests/ApiTest.php

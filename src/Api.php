@@ -308,10 +308,9 @@ class Api
      *
      * @param Response $response
      *
-     * @return array
      * @throws \JsonException
      */
-    private function decodeResponse(Response $response): array
+    private function decodeResponse(Response $response)
     {
         return json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
     }
@@ -324,11 +323,10 @@ class Api
      * @param array  headers  custom HTTP headers to add on the request
      * @param bool   is_authenticated   if the request need to be authenticated
      *
-     * @return array
      * @throws ClientException if http request is an error
      * @throws \JsonException
      */
-    public function get($path, $content = null, $headers = null, $is_authenticated = true): array
+    public function get($path, $content = null, $headers = null, $is_authenticated = true)
     {
         if (preg_match('/^\/[^\/]+\.json$/', $path)) {
             // Schema description must be access without authentication
@@ -350,10 +348,9 @@ class Api
      * @param array  headers  custom HTTP headers to add on the request
      * @param bool   is_authenticated   if the request need to be authenticated
      *
-     * @return array
      * @throws ClientException if http request is an error
      */
-    public function post($path, $content = null, $headers = null, $is_authenticated = true): array
+    public function post($path, $content = null, $headers = null, $is_authenticated = true)
     {
         return $this->decodeResponse(
             $this->rawCall("POST", $path, $content, $is_authenticated, $headers)
@@ -368,10 +365,9 @@ class Api
      * @param array  headers  custom HTTP headers to add on the request
      * @param bool   is_authenticated   if the request need to be authenticated
      *
-     * @return array
      * @throws ClientException if http request is an error
      */
-    public function put($path, $content, $headers = null, $is_authenticated = true): array
+    public function put($path, $content, $headers = null, $is_authenticated = true)
     {
         return $this->decodeResponse(
             $this->rawCall("PUT", $path, $content, $is_authenticated, $headers)
@@ -386,10 +382,9 @@ class Api
      * @param array  headers  custom HTTP headers to add on the request
      * @param bool   is_authenticated   if the request need to be authenticated
      *
-     * @return array
      * @throws ClientException if http request is an error
      */
-    public function delete($path, $content = null, $headers = null, $is_authenticated = true): array
+    public function delete($path, $content = null, $headers = null, $is_authenticated = true)
     {
         return $this->decodeResponse(
             $this->rawCall("DELETE", $path, $content, $is_authenticated, $headers)

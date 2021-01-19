@@ -30,6 +30,7 @@ namespace Ovh\tests;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
 use Ovh\Api;
@@ -145,14 +146,19 @@ class ApiTest extends TestCase
                 return $request;
             }
 
-            $request = $request->withUri($request->getUri()
-                ->withHost('httpbin.org')
-                ->withPath('/')
-                ->withQuery(''));
-            return $request;
+            return null;
+        }));
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+            $body = Psr7\Utils::streamFor('{}');
+
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withBody($body);
         }));
         $api = new Api(NULL, NULL, $this->endpoint, $this->consumer_key, $this->client);
-        $api->get('/1.0/unauthcall', null, null, false);
+        $api->get('/unauthcall', null, null, false);
+        $this->assertEquals(1, 1);
     }
 
     /**
@@ -193,11 +199,11 @@ class ApiTest extends TestCase
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
-            $body = $response->getBody();
-            $body->write(time() - 10);
+            $body = Psr7\Utils::streamFor(time() - 10);
 
             return $response
                 ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
                 ->withBody($body);
         }));
 
@@ -220,15 +226,18 @@ class ApiTest extends TestCase
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
-            $body = $response->getBody();
-            $body->write('{"validationUrl":"https://api.ovh.com/login/?credentialToken=token","consumerKey":"consumer_remote","state":"pendingValidation"}');
+            $body = Psr7\Utils::streamFor('{"validationUrl":"https://api.ovh.com/login/?credentialToken=token","consumerKey":"consumer_remote","state":"pendingValidation"}');
 
             return $response
                 ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
                 ->withBody($body);
         }));
 
         $property = self::getPrivateProperty('consumer_key');
+
+        $this->assertEquals('consumer', $this->consumer_key);
+        $this->assertNotEquals('consumer_remote', $this->consumer_key);
 
         $api         = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $accessRules = [json_decode(' { "method": "GET", "path": "/*" } ')];
@@ -238,6 +247,7 @@ class ApiTest extends TestCase
         $consumer_key = $property->getValue($api);
 
         $this->assertEquals($consumer_key, $credentials["consumerKey"]);
+        $this->assertEquals('consumer_remote', $credentials["consumerKey"]);
         $this->assertNotEquals($consumer_key, $this->consumer_key);
     }
 
@@ -252,8 +262,7 @@ class ApiTest extends TestCase
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
-            $body = $response->getBody();
-            $body->write('{\"message\":\"Invalid application key\"}');
+            $body = Psr7\Utils::streamFor('{\"message\":\"Invalid application key\"}');
 
             return $response
                 ->withStatus(401, 'POUET')
@@ -283,8 +292,7 @@ class ApiTest extends TestCase
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
 
-            $body = $response->getBody();
-            $body->write('{\"message\":\"Invalid credentials\"}');
+            $body = Psr7\Utils::streamFor('{\"message\":\"Invalid credentials\"}');
 
             return $response
                 ->withStatus(403)
@@ -326,9 +334,14 @@ class ApiTest extends TestCase
                 ->withQuery(''));
             return $request;
         }));
-        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
-        //    return $response;
-        //}));
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+            $body = Psr7\Utils::streamFor('123456789991');
+
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withBody($body);
+        }));
 
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $api->get('/me/api/credential?applicationId=49', ['status' => 'pendingValidation']);
@@ -354,9 +367,14 @@ class ApiTest extends TestCase
                 ->withQuery(''));
             return $request;
         }));
-        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
-        //    return $response;
-        //}));
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+            $body = Psr7\Utils::streamFor('123456789991');
+
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withBody($body);
+        }));
 
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $api->get('/me/api/credential?applicationId=49&status=pendingValidation', ['status' => 'expired', 'test' => "success"]);
@@ -382,9 +400,14 @@ class ApiTest extends TestCase
                 ->withQuery(''));
             return $request;
         }));
-        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
-        //    return $response;
-        //}));
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+            $body = Psr7\Utils::streamFor('123456789991');
+
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withBody($body);
+        }));
 
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $api->get('/me/api/credential', ['dryRun' => true, 'notDryRun' => false]);
@@ -416,9 +439,14 @@ class ApiTest extends TestCase
                 ->withQuery(''));
             return $request;
         }));
-        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
-        //    return $response;
-        //}));
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+            $body = Psr7\Utils::streamFor('123456789991');
+
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withBody($body);
+        }));
 
         $api = new Api($this->application_key, $this->application_secret, 'ovh-ca', $this->consumer_key, $this->client);
         $api->get('/me/api/credential');
@@ -450,9 +478,14 @@ class ApiTest extends TestCase
                 ->withQuery(''));
             return $request;
         }));
-        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
-        //    return $response;
-        //}));
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+            $body = Psr7\Utils::streamFor('123456789991');
+
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withBody($body);
+        }));
 
         $api = new Api($this->application_key, $this->application_secret, 'http://api.ovh.com/1.0', $this->consumer_key, $this->client);
         $api->get('/me/api/credential');
@@ -484,9 +517,14 @@ class ApiTest extends TestCase
                 ->withQuery(''));
             return $request;
         }));
-        //$handlerStack->push(Middleware::mapResponse(function (Response $response) {
-        //    return $response;
-        //}));
+        $handlerStack->push(Middleware::mapResponse(function (Response $response) {
+            $body = Psr7\Utils::streamFor('123456789991');
+
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withBody($body);
+        }));
 
         $api = new Api($this->application_key, $this->application_secret, 'https://api.ovh.com/1.0', $this->consumer_key, $this->client);
         $api->get('/me/api/credential');
@@ -514,10 +552,16 @@ class ApiTest extends TestCase
             return $request;
         }));
         $handlerStack->push(Middleware::mapResponse(function (Response $response) {
-            return $response->withStatus(200);
+            $body = Psr7\Utils::streamFor('{"validationUrl":"https://api.ovh.com/login/?credentialToken=token","consumerKey":"consumer_remote","state":"pendingValidation"}');
+
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json; charset=utf-8')
+                ->withBody($body);
         }));
 
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $api->requestCredentials([]);
     }
+
 }
