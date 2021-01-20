@@ -227,15 +227,11 @@ local npm project in a clone a project
     git https://github.com/ovh/php-ovh.git
     cd php-ovh
     php composer.phar install
+    vendor/bin/phpunit tests/ApiTest.php
 
-Edit **phpunit.xml** file with your credentials to pass functionals tests. Then,
-you can run directly unit and functionals tests with [phing](http://www.phing.info/).
+To run functionals tests, you need to provide valid API credentials, that you can provide them via environment:
 
-    vendor/bin/phing test
-
-To skip functionals and run unit tests only, you can use the `only.units` option :
-
-    vendor/bin/phing test -Donly.units=true
+    APP_KEY=xxx APP_SECRET=xxx CONSUMER=xxx ENDPOINT=xxx vendor/bin/phpunit tests/ApiFunctionalTest.php
 
 Supported APIs
 --------------
