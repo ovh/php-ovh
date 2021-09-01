@@ -263,7 +263,7 @@ class Api
                 }
             }
 
-            $query = \GuzzleHttp\Psr7\build_query($query);
+            $query = \GuzzleHttp\Psr7\Query::build($query);
 
             $url     = $request->getUri()->withQuery($query);
             $request = $request->withUri($url);
