@@ -4,7 +4,10 @@ addons:
     - libcurl4-openssl-dev
 
 language: php
+dist: focal
 php:
+  - 8.1.0
+  - 8.0
   - 7.4
 
 before_script:
