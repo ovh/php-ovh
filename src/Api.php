@@ -312,7 +312,8 @@ class Api
      */
     private function decodeResponse(Response $response)
     {
-        return json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $body = mb_convert_encoding($response->getBody(), 'ISO-8859-1', 'UTF-8');
+        return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
