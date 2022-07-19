@@ -28,7 +28,9 @@
 namespace Ovh\tests;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Ovh\Api;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Functional tests of Api class
@@ -36,7 +38,7 @@ use Ovh\Api;
  * @package  Ovh
  * @category Ovh
  */
-class ApiFunctionalTest extends \PHPUnit_Framework_TestCase
+class ApiFunctionalTest extends TestCase
 {
 
     /**
@@ -82,7 +84,7 @@ class ApiFunctionalTest extends \PHPUnit_Framework_TestCase
     /**
      * Define id to create object
      */
-    protected function setUp()
+    protected function setUp() :void
     {
         $this->application_key    = getenv('APP_KEY');
         $this->application_secret = getenv('APP_SECRET');
@@ -238,7 +240,7 @@ class ApiFunctionalTest extends \PHPUnit_Framework_TestCase
      */
     public function testApiGetWithParameters()
     {
-        $this->setExpectedException('\\GuzzleHttp\\Exception\\ClientException', '400');
+        $this->expectException(ClientException::class);
 
         $this->api->get('/me/accessRestriction/ip', ['foo' => 'bar']);
     }

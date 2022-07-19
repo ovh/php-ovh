@@ -42,5 +42,4 @@ use Exception;
  */
 class NotLoggedException extends Exception
 {
-
 }

@@ -5,14 +5,10 @@ addons:
 
 language: php
 php:
-  - 7.3
-  - 7.2
-  - 7.1
-  - 7.0
-  - 5.6
+  - 7.4
 
 before_script:
   - composer self-update
   - composer install
 
-script: vendor/bin/phing test -Donly.units=true
+script: vendor/bin/phpunit tests/ApiTest.php
