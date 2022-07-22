@@ -3,7 +3,7 @@
     "description": "Wrapper for OVH APIs",
     "license": "BSD-3-Clause",
     "require": {
-        "php": ">=7.4",
+        "php": ">=7.3",
         "guzzlehttp/guzzle": "^6.0||^7.0",
         "ext-json": "*"
     },
