@@ -142,7 +142,7 @@ class ApiTest extends TestCase
     {
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
-            if($request->getUri()->getPath() == "/1.0/unauthcall") {
+            if ($request->getUri()->getPath() == "/1.0/unauthcall") {
                 return $request;
             }
 
@@ -156,7 +156,7 @@ class ApiTest extends TestCase
                 ->withHeader('Content-Type', 'application/json; charset=utf-8')
                 ->withBody($body);
         }));
-        $api = new Api(NULL, NULL, $this->endpoint, $this->consumer_key, $this->client);
+        $api = new Api(null, null, $this->endpoint, $this->consumer_key, $this->client);
         $api->get('/unauthcall', null, null, false);
         $this->assertEquals(1, 1);
     }
@@ -321,7 +321,7 @@ class ApiTest extends TestCase
     {
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
-            if($request->getUri()->getPath() == "/1.0/auth/time") {
+            if ($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
             }
 
@@ -354,7 +354,7 @@ class ApiTest extends TestCase
     {
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
-            if($request->getUri()->getPath() == "/1.0/auth/time") {
+            if ($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
             }
 
@@ -387,7 +387,7 @@ class ApiTest extends TestCase
     {
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
-            if($request->getUri()->getPath() == "/1.0/auth/time") {
+            if ($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
             }
 
@@ -420,7 +420,7 @@ class ApiTest extends TestCase
     {
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
-            if($request->getUri()->getPath() == "/1.0/auth/time") {
+            if ($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
             }
 
@@ -459,7 +459,7 @@ class ApiTest extends TestCase
     {
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
-            if($request->getUri()->getPath() == "/1.0/auth/time") {
+            if ($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
             }
 
@@ -498,7 +498,7 @@ class ApiTest extends TestCase
     {
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
-            if($request->getUri()->getPath() == "/1.0/auth/time") {
+            if ($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
             }
 
@@ -537,7 +537,7 @@ class ApiTest extends TestCase
     {
         $handlerStack = $this->client->getConfig('handler');
         $handlerStack->push(Middleware::mapRequest(function (Request $request) {
-            if($request->getUri()->getPath() == "/1.0/auth/time") {
+            if ($request->getUri()->getPath() == "/1.0/auth/time") {
                 return $request;
             }
 
@@ -563,5 +563,4 @@ class ApiTest extends TestCase
         $api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
         $api->requestCredentials([]);
     }
-
 }

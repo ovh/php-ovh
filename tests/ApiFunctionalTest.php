@@ -198,14 +198,18 @@ class ApiFunctionalTest extends TestCase
     {
         $result = $this->api->get('/me/accessRestriction/ip');
 
-        $restrictionId = array_pop($result);
+        foreach ($result as $restrictionId) {
+            $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
 
-        $this->assertNull(
-            $this->api->put('/me/accessRestriction/ip/' . $restrictionId, ['rule' => 'accept', 'warning' => true])
-        );
+            if (in_array($restriction["ip"], [$this->rangeIP, $this->alternativeRangeIP])) {
+                $this->assertNull(
+                    $this->api->put('/me/accessRestriction/ip/' . $restrictionId, ['rule' => 'accept', 'warning' => true])
+                );
 
-        $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
-        $this->assertEquals('accept', $restriction['rule']);
+                $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
+                $this->assertEquals('accept', $restriction['rule']);
+            }
+        }
     }
 
     /**
@@ -220,7 +224,6 @@ class ApiFunctionalTest extends TestCase
             if (in_array($restriction["ip"], [$this->rangeIP, $this->alternativeRangeIP])) {
                 $result = $this->api->delete('/me/accessRestriction/ip/' . $restrictionId);
                 $this->assertNull($result);
-                break;
             }
         }
     }
@@ -232,7 +235,8 @@ class ApiFunctionalTest extends TestCase
     {
         $api     = new Api($this->application_key, $this->application_secret, $this->endpoint, null, $this->client);
         $invoker = self::getPrivateMethod('rawCall');
-        $invoker->invokeArgs($api, ['GET', '/xdsl/incidents']);
+        $result = $invoker->invokeArgs($api, ['GET', '/xdsl/incidents']);
+        $this->assertIsObject($result);
     }
 
     /**
@@ -250,7 +254,8 @@ class ApiFunctionalTest extends TestCase
      */
     public function testApiGetWithQueryString()
     {
-        $this->api->get('/me/api/credential', ['status' => 'pendingValidation']);
+        $result = $this->api->get('/me/api/credential', ['status' => 'pendingValidation']);
+        $this->assertIsArray($result);
     }
 
     /**
@@ -258,7 +263,8 @@ class ApiFunctionalTest extends TestCase
      */
     public function testApiGetWithoutAuthentication()
     {
-        $api = new Api(NULL,NULL, $this->endpoint, null, $this->client);
-        $api->get('/hosting/web/moduleList',null,null,false);
+        $api = new Api(null, null, $this->endpoint, null, $this->client);
+        $result = $api->get('/hosting/web/moduleList', null, null, false);
+        $this->assertIsArray($result);
     }
 }
