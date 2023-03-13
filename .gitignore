@@ -1,7 +1,9 @@
 node_modules
-vendor
+/build
+/vendor
 composer.lock
 composer.phar
 /phpunit.xml
 /build.properties
 /docs
+.phpunit.*.cache
