@@ -86,6 +86,13 @@ class ApiFunctionalTest extends TestCase
      */
     protected function setUp() :void
     {
+        foreach (['APP_KEY', 'APP_SECRET', 'CONSUMER', 'ENDPOINT'] as $envName) {
+            if (!getenv($envName)) {
+                $this->markTestSkipped("Skip test due to missing $envName variable");
+                return;
+            }
+        }
+
         $this->application_key    = getenv('APP_KEY');
         $this->application_secret = getenv('APP_SECRET');
         $this->consumer_key       = getenv('CONSUMER');
