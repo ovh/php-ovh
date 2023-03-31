@@ -212,6 +212,24 @@ class Api
     }
 
     /**
+     * getTarget returns the URL to target given an endpoint and a path.
+     * If the path starts with `/v1` or `/v2`, then remove the trailing `/1.0` from the endpoint.
+     *
+     * @param string path to use prefix from
+     * @return string
+     */
+    protected function getTarget($path) : string
+    {
+        $endpoint = $this->endpoint;
+        if (substr($endpoint, -4) == '/1.0' && (
+                substr($path, 0, 3) == '/v1' ||
+                substr($path, 0, 3) == '/v2')) {
+            $endpoint =  substr($endpoint, 0, strlen($endpoint)-4);
+        }
+        return $endpoint . $path;
+    }
+
+    /**
      * This is the main method of this wrapper. It will
      * sign a given query and return its result.
      *
@@ -238,7 +256,7 @@ class Api
             }
         }
 
-        $url     = $this->endpoint . $path;
+        $url     = $this->getTarget($path);
         $request = new Request($method, $url);
         if (isset($content) && $method === 'GET') {
             $query_string = $request->getUri()->getQuery();
@@ -280,9 +298,8 @@ class Api
         }
         $headers['Content-Type']      = 'application/json; charset=utf-8';
 
+        $headers['X-Ovh-Application'] = $this->application_key ?? '';
         if ($is_authenticated) {
-            $headers['X-Ovh-Application'] = $this->application_key;
-
             if (!isset($this->time_delta)) {
                 $this->calculateTimeDelta();
             }
