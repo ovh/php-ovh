@@ -15,7 +15,7 @@ Compatible with PHP 7.4, 8.0, 8.1, 8.2.
 
 ## Installation
 
-Install this wrapper and integrate it inside your PHP application with [Composer](https://getcomposer.org) :
+Install this wrapper and integrate it inside your PHP application with [Composer](https://getcomposer.org):
 
     composer require ovh/ovh
 
@@ -115,7 +115,7 @@ header('location: '. $credentials['validationUrl']);
 // After successful redirect, the consumerKey in the session will be activated and you will be able to use it to make API requests like in the "Basic usage" section above.
 ```
 
-### Code sample : Enable network burst on GRA1 dedicated servers
+### Code sample: Enable network burst on GRA1 dedicated servers
 
 Here is a more complex example of how to use the wrapper to enable network burst on GRA1 dedicated servers.
 
@@ -151,7 +151,7 @@ Do you want to use OVH APIs? Maybe the script you want is already written in the
 
 ## OVHcloud API authentication
 
-To use the OVHcloud APIs you need three credentials :
+To use the OVHcloud APIs you need three credentials:
 
 * An application key
 * An application secret
