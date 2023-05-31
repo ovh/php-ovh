@@ -16,7 +16,7 @@ Coding and documentation Style:
 
 - The coding style follows PSR-2 `Coding Style Guide <http://www.php-fig.org/psr/psr-2/>`_
 - The documentation uses `phpDocumentor <http://www.phpdoc.org/>`_
-- Unit test uses `phpUnit 4+ <https://phpunit.de>`_
+- Unit test uses `phpUnit 9+ <https://phpunit.de>`_
 - Code syntax must follows `phpLint rules <http://www.icosaedro.it/phplint/>`_
 
 Submitting Modifications:
