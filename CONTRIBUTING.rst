@@ -32,7 +32,7 @@ It can be accessed online too:
 
 https://www.kernel.org/doc/Documentation/SubmittingPatches
 
-You can submit your patches via GitHub
+You can submit your patches via GitHub.
 
 Licensing for new files:
 ------------------------
