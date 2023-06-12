@@ -43,7 +43,7 @@ use PHPUnit\Framework\TestCase;
 const MOCK_APPLICATION_KEY = "TDPKJdwZwAQPwKX2";
 const MOCK_APPLICATION_SECRET = "9ufkBmLaTQ9nz5yMUlg79taH0GNnzDjk";
 const MOCK_CONSUMER_KEY = "5mBuy6SUQcRw2ZUxg0cG68BoDKpED4KY";
-const MOCK_TIME = 1457018875;
+const MOCK_TIME = '1457018875';
 
 class MockClient extends Client
 {
@@ -119,12 +119,12 @@ class ApiTest extends TestCase
         $api->get("/me", null, null, false);
 
         $calls = $client->calls;
-        $this->assertEquals(1, count($calls));
+        $this->assertCount(1, $calls);
 
         $req = $calls[0]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/me', $req->getUri()->__toString());
-        $this->assertEquals('', $req->getHeaderLine('X-Ovh-Application'));
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/me', $req->getUri()->__toString());
+        $this->assertSame('', $req->getHeaderLine('X-Ovh-Application'));
     }
 
     /**
@@ -171,18 +171,18 @@ class ApiTest extends TestCase
 
         $property = self::getPrivateProperty('time_delta');
         $time_delta = $property->getValue($api);
-        $this->assertEquals($time_delta, -10);
+        $this->assertSame('-10', $time_delta);
 
         $calls = $client->calls;
-        $this->assertEquals(2, count($calls));
+        $this->assertCount(2, $calls);
 
         $req = $calls[0]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
 
         $req = $calls[1]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/me', $req->getUri()->__toString());
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/me', $req->getUri()->__toString());
     }
 
     /**
@@ -202,18 +202,18 @@ class ApiTest extends TestCase
         $api = new Api(MOCK_APPLICATION_KEY, MOCK_APPLICATION_SECRET, 'ovh-eu', MOCK_CONSUMER_KEY, $client);
         $this->assertNotEquals('consumer_remote', $api->getConsumerKey());
         $credentials = $api->requestCredentials(['method' => 'GET', 'path' => '/*']);
-        $this->assertEquals('consumer_remote', $api->getConsumerKey());
+        $this->assertSame('consumer_remote', $api->getConsumerKey());
 
         $calls = $client->calls;
-        $this->assertEquals(2, count($calls));
+        $this->assertCount(2, $calls);
 
         $req = $calls[0]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
 
         $req = $calls[1]['request'];
-        $this->assertEquals('POST', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/auth/credential', $req->getUri()->__toString());
+        $this->assertSame('POST', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/auth/credential', $req->getUri()->__toString());
     }
 
     /**
@@ -251,7 +251,7 @@ class ApiTest extends TestCase
     public function testGetConsumerKey()
     {
         $api = new Api(MOCK_APPLICATION_KEY, MOCK_APPLICATION_SECRET, 'ovh-eu', MOCK_CONSUMER_KEY);
-        $this->assertEquals(MOCK_CONSUMER_KEY, $api->getConsumerKey());
+        $this->assertSame(MOCK_CONSUMER_KEY, $api->getConsumerKey());
     }
 
 
@@ -266,11 +266,11 @@ class ApiTest extends TestCase
         $api->get('/me/api/credential?applicationId=49', ['status' => 'pendingValidation'], null, false);
 
         $calls = $client->calls;
-        $this->assertEquals(1, count($calls));
+        $this->assertCount(1, $calls);
 
         $req = $calls[0]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/me/api/credential?applicationId=49&status=pendingValidation', $req->getUri()->__toString());
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/me/api/credential?applicationId=49&status=pendingValidation', $req->getUri()->__toString());
     }
 
     /**
@@ -284,11 +284,11 @@ class ApiTest extends TestCase
         $api->get('/me/api/credential?applicationId=49&status=pendingValidation', ['status' => 'expired', 'test' => "success"], null, false);
 
         $calls = $client->calls;
-        $this->assertEquals(1, count($calls));
+        $this->assertCount(1, $calls);
 
         $req = $calls[0]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/me/api/credential?applicationId=49&status=expired&test=success', $req->getUri()->__toString());
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/me/api/credential?applicationId=49&status=expired&test=success', $req->getUri()->__toString());
     }
 
     /**
@@ -302,11 +302,11 @@ class ApiTest extends TestCase
         $api->get('/me/api/credential', ['dryRun' => true, 'notDryRun' => false], null, false);
 
         $calls = $client->calls;
-        $this->assertEquals(1, count($calls));
+        $this->assertCount(1, $calls);
 
         $req = $calls[0]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/me/api/credential?dryRun=true&notDryRun=false', $req->getUri()->__toString());
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/me/api/credential?dryRun=true&notDryRun=false', $req->getUri()->__toString());
     }
 
     /**
@@ -325,11 +325,11 @@ class ApiTest extends TestCase
             $api->get('/me/api/credential', null, null, false);
 
             $calls = $client->calls;
-            $this->assertEquals(1, count($calls));
+            $this->assertCount(1, $calls);
 
             $req = $calls[0]['request'];
-            $this->assertEquals('GET', $req->getMethod());
-            $this->assertEquals($test['expectedUrl'] . '/me/api/credential', $req->getUri()->__toString());
+            $this->assertSame('GET', $req->getMethod());
+            $this->assertSame($test['expectedUrl'] . '/me/api/credential', $req->getUri()->__toString());
         }
     }
 
@@ -347,18 +347,18 @@ class ApiTest extends TestCase
         $api->requestCredentials([]);
 
         $calls = $client->calls;
-        $this->assertEquals(2, count($calls));
+        $this->assertCount(2, $calls);
 
         $req = $calls[0]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
 
         $req = $calls[1]['request'];
-        $this->assertEquals('POST', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/auth/credential', $req->getUri()->__toString());
-        $this->assertEquals(MOCK_APPLICATION_KEY, $req->getHeaderLine('X-Ovh-Application'));
-        $this->assertEquals(MOCK_CONSUMER_KEY, $req->getHeaderLine('X-Ovh-Consumer'));
-        $this->assertEquals(MOCK_TIME, $req->getHeaderLine('X-Ovh-Timestamp'));
+        $this->assertSame('POST', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/auth/credential', $req->getUri()->__toString());
+        $this->assertSame(MOCK_APPLICATION_KEY, $req->getHeaderLine('X-Ovh-Application'));
+        $this->assertSame(MOCK_CONSUMER_KEY, $req->getHeaderLine('X-Ovh-Consumer'));
+        $this->assertSame(MOCK_TIME, $req->getHeaderLine('X-Ovh-Timestamp'));
     }
 
     public function testCallSignature()
@@ -387,11 +387,11 @@ class ApiTest extends TestCase
         $api->delete('/unauth', null, null, false);
 
         $calls = $client->calls;
-        $this->assertEquals(9, count($calls));
+        $this->assertCount(9, $calls);
 
         $req = $calls[0]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
 
         foreach ([
             1 => ['method' => 'GET',    'sig' => '$1$e9556054b6309771395efa467c22e627407461ad'],
@@ -400,27 +400,27 @@ class ApiTest extends TestCase
             4 => ['method' => 'DELETE', 'sig' => '$1$a1eecd00b3b02b6cf5708b84b9ff42059a950d85'],
         ] as $i => $test) {
             $req = $calls[$i]['request'];
-            $this->assertEquals($test['method'], $req->getMethod());
-            $this->assertEquals('https://eu.api.ovh.com/1.0/auth', $req->getUri()->__toString());
-            $this->assertEquals(MOCK_APPLICATION_KEY, $req->getHeaderLine('X-Ovh-Application'));
-            $this->assertEquals(MOCK_CONSUMER_KEY, $req->getHeaderLine('X-Ovh-Consumer'));
-            $this->assertEquals(MOCK_TIME, $req->getHeaderLine('X-Ovh-Timestamp'));
-            $this->assertEquals($test['sig'], $req->getHeaderLine('X-Ovh-Signature'));
+            $this->assertSame($test['method'], $req->getMethod());
+            $this->assertSame('https://eu.api.ovh.com/1.0/auth', $req->getUri()->__toString());
+            $this->assertSame(MOCK_APPLICATION_KEY, $req->getHeaderLine('X-Ovh-Application'));
+            $this->assertSame(MOCK_CONSUMER_KEY, $req->getHeaderLine('X-Ovh-Consumer'));
+            $this->assertSame(MOCK_TIME, $req->getHeaderLine('X-Ovh-Timestamp'));
+            $this->assertSame($test['sig'], $req->getHeaderLine('X-Ovh-Signature'));
             if ($test['method'] == 'POST' || $test['method'] == 'PUT') {
-                $this->assertEquals('application/json; charset=utf-8', $req->getHeaderLine('Content-Type'));
+                $this->assertSame('application/json; charset=utf-8', $req->getHeaderLine('Content-Type'));
             }
         }
 
         foreach (['GET', 'POST', 'PUT', 'DELETE'] as $i => $method) {
             $req = $calls[$i + 5]['request'];
-            $this->assertEquals($method, $req->getMethod());
-            $this->assertEquals('https://eu.api.ovh.com/1.0/unauth', $req->getUri()->__toString());
-            $this->assertEquals(MOCK_APPLICATION_KEY, $req->getHeaderLine('X-Ovh-Application'));
+            $this->assertSame($method, $req->getMethod());
+            $this->assertSame('https://eu.api.ovh.com/1.0/unauth', $req->getUri()->__toString());
+            $this->assertSame(MOCK_APPLICATION_KEY, $req->getHeaderLine('X-Ovh-Application'));
             $this->assertNotTrue($req->hasHeader('X-Ovh-Consumer'));
             $this->assertNotTrue($req->hasHeader('X-Ovh-Timestamp'));
             $this->assertNotTrue($req->hasHeader('X-Ovh-Signature'));
             if ($method == 'POST' || $method == 'PUT') {
-                $this->assertEquals('application/json; charset=utf-8', $req->getHeaderLine('Content-Type'));
+                $this->assertSame('application/json; charset=utf-8', $req->getHeaderLine('Content-Type'));
             }
         }
     }
@@ -442,11 +442,11 @@ class ApiTest extends TestCase
         $api->get('/v2/call');
 
         $calls = $client->calls;
-        $this->assertEquals(4, count($calls));
+        $this->assertCount(4, $calls);
 
         $req = $calls[0]['request'];
-        $this->assertEquals('GET', $req->getMethod());
-        $this->assertEquals('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
 
         foreach ([
             1 => ['path' => '1.0/call', 'sig' => '$1$7f2db49253edfc41891023fcd1a54cf61db05fbb'],
@@ -454,12 +454,12 @@ class ApiTest extends TestCase
             3 => ['path' => 'v2/call',  'sig' => '$1$bb63b132a6f84ad5433d0c534d48d3f7c3804285'],
         ] as $i => $test) {
             $req = $calls[$i]['request'];
-            $this->assertEquals('GET', $req->getMethod());
-            $this->assertEquals('https://eu.api.ovh.com/' . $test['path'], $req->getUri()->__toString());
-            $this->assertEquals(MOCK_APPLICATION_KEY, $req->getHeaderLine('X-Ovh-Application'));
-            $this->assertEquals(MOCK_CONSUMER_KEY, $req->getHeaderLine('X-Ovh-Consumer'));
-            $this->assertEquals(MOCK_TIME, $req->getHeaderLine('X-Ovh-Timestamp'));
-            $this->assertEquals($test['sig'], $req->getHeaderLine('X-Ovh-Signature'));
+            $this->assertSame('GET', $req->getMethod());
+            $this->assertSame('https://eu.api.ovh.com/' . $test['path'], $req->getUri()->__toString());
+            $this->assertSame(MOCK_APPLICATION_KEY, $req->getHeaderLine('X-Ovh-Application'));
+            $this->assertSame(MOCK_CONSUMER_KEY, $req->getHeaderLine('X-Ovh-Consumer'));
+            $this->assertSame(MOCK_TIME, $req->getHeaderLine('X-Ovh-Timestamp'));
+            $this->assertSame($test['sig'], $req->getHeaderLine('X-Ovh-Signature'));
         }
     }
 }

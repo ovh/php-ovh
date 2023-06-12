@@ -158,7 +158,7 @@ class ApiFunctionalTest extends TestCase
         $credentials  = $this->api->requestCredentials($accessRules);
         $consumer_key = $property->getValue($this->api);
 
-        $this->assertEquals($consumer_key, $credentials["consumerKey"]);
+        $this->assertSame($consumer_key, $credentials["consumerKey"]);
         $this->assertNotEquals($consumer_key, $this->consumer_key);
     }
 
@@ -214,7 +214,7 @@ class ApiFunctionalTest extends TestCase
                 );
 
                 $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
-                $this->assertEquals('accept', $restriction['rule']);
+                $this->assertSame('accept', $restriction['rule']);
             }
         }
     }
