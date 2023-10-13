@@ -261,7 +261,7 @@ class Api
         if (isset($content) && $method === 'GET') {
             $query_string = $request->getUri()->getQuery();
 
-            $query = array();
+            $query = [];
             if (!empty($query_string)) {
                 $queries = explode('&', $query_string);
                 foreach ($queries as $element) {
