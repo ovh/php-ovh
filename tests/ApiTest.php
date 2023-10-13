@@ -79,7 +79,7 @@ class ApiTest extends TestCase
      */
     protected static function getPrivateProperty($name)
     {
-        $class    = new \ReflectionClass('Ovh\Api');
+        $class    = new \ReflectionClass(\Ovh\Api::class);
         $property = $class->getProperty($name);
         $property->setAccessible(true);
 

@@ -119,7 +119,7 @@ class ApiFunctionalTest extends TestCase
      */
     protected static function getPrivateMethod($name)
     {
-        $class  = new \ReflectionClass('Ovh\Api');
+        $class  = new \ReflectionClass(\Ovh\Api::class);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
 
@@ -135,7 +135,7 @@ class ApiFunctionalTest extends TestCase
      */
     protected static function getPrivateProperty($name)
     {
-        $class    = new \ReflectionClass('Ovh\Api');
+        $class    = new \ReflectionClass(\Ovh\Api::class);
         $property = $class->getProperty($name);
         $property->setAccessible(true);
 
