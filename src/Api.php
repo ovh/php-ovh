@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2013-2017, OVH SAS.
+# Copyright (c) 2013-2023, OVH SAS.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -329,6 +329,9 @@ class Api
      */
     private function decodeResponse(Response $response)
     {
+        if ($response->getStatusCode() === 204 || $response->getBody()->getSize() === 0) {
+            return null;
+        }
         return json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
     }
 

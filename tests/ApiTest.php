@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2013-2017, OVH SAS.
+# Copyright (c) 2013-2023, OVH SAS.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -461,5 +461,30 @@ class ApiTest extends TestCase
             $this->assertSame(MOCK_TIME, $req->getHeaderLine('X-Ovh-Timestamp'));
             $this->assertSame($test['sig'], $req->getHeaderLine('X-Ovh-Signature'));
         }
+    }
+
+    public function testEmptyResponseBody()
+    {
+        $client = new MockClient(
+            // GET /auth/time
+            new Response(200, [], MOCK_TIME),
+            // POST /domain/zone/nonexisting.ovh/refresh
+            new Response(204, [], ''),
+        );
+
+        $api = new Api(MOCK_APPLICATION_KEY, MOCK_APPLICATION_SECRET, 'ovh-eu', MOCK_CONSUMER_KEY, $client);
+        $response = $api->post('/domain/zone/nonexisting.ovh/refresh');
+        $this->assertSame(null, $response);
+
+        $calls = $client->calls;
+        $this->assertCount(2, $calls);
+
+        $req = $calls[0]['request'];
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/auth/time', $req->getUri()->__toString());
+
+        $req = $calls[1]['request'];
+        $this->assertSame('POST', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/domain/zone/nonexisting.ovh/refresh', $req->getUri()->__toString());
     }
 }
