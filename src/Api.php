@@ -329,6 +329,10 @@ class Api
      */
     private function decodeResponse(Response $response)
     {
+        if ($response->getStatusCode() === 204 || $response->getBody()->getSize() === 0) {
+            return [];
+        }
+
         return json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
     }
 
