@@ -309,7 +309,7 @@ class Api
 
             if (isset($this->consumer_key)) {
                 $toSign                     = $this->application_secret . '+' . $this->consumer_key . '+' . $method
-                    . '+' . $url . '+' . $body . '+' . $now;
+                    . '+' . (string) $request->getUri() . '+' . $body . '+' . $now;
                 $signature                  = '$1$' . sha1($toSign);
                 $headers['X-Ovh-Consumer']  = $this->consumer_key;
                 $headers['X-Ovh-Signature'] = $signature;
