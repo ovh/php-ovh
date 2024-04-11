@@ -30,7 +30,7 @@ of the Linux kernel source tree.
 
 It can be accessed online too:
 
-https://www.kernel.org/doc/Documentation/SubmittingPatches
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
 
 You can submit your patches via GitHub.
 
