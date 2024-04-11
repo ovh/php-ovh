@@ -107,7 +107,7 @@ $rights = [
 // After allowing your application access, the customer will be redirected to this URL.
 $redirectUrl = 'https://your_application_redirect_url'
 
-$credentials = $conn->requestCredentials($rights, $redirectUrl);
+$credentials = $ovh->requestCredentials($rights, $redirectUrl);
 
 // Save consumer key and redirect to authentication page
 $_SESSION['consumerKey'] = $credentials['consumerKey'];
@@ -131,15 +131,15 @@ $ovh = new Api($applicationKey,
                 $consumerKey);
 
 // Load the list of dedicated servers
-$servers = $conn->get('/dedicated/server/');
+$servers = $ovh->get('/dedicated/server/');
 foreach ($servers as $server) {
     // Load the server details
-    $details = $conn->get('/dedicated/server/'.$server);
+    $details = $ovh->get('/dedicated/server/'.$server);
     // Filter servers only inside GRA1
     if ($details['datacenter'] == 'gra1') {
         // Activate burst on server
         $content = ['status' => 'active'];
-        $conn->put('/dedicated/server/'.$server.'/burst', $content);
+        $ovh->put('/dedicated/server/'.$server.'/burst', $content);
         echo 'Burst enabled on '.$server;
     }
 }
