@@ -7,3 +7,4 @@ composer.phar
 /build.properties
 /docs
 .phpunit.*.cache
+/.php-cs-fixer.cache
