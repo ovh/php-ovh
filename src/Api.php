@@ -294,7 +294,7 @@ class Api
         $endpoint = $this->endpoint;
         if ('/1.0' == substr($endpoint, -4) && (
             '/v1' == substr($path, 0, 3)
-                || '/v2' == substr($path, 0, 3)
+            || '/v2' == substr($path, 0, 3)
         )) {
             $endpoint = substr($endpoint, 0, strlen($endpoint) - 4);
         }
@@ -388,7 +388,9 @@ class Api
             }
         }
 
-        /* @var Response $response */
+        /*
+         * @var Response $response
+         */
         return $this->http_client->send($request, ['headers' => $headers]);
     }
 

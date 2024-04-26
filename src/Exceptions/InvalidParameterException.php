@@ -44,4 +44,6 @@ use Exception;
  *
  * @category Exceptions
  */
-class InvalidParameterException extends \Exception {}
+class InvalidParameterException extends \Exception
+{
+}

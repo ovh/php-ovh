@@ -43,4 +43,6 @@ use Exception;
  *
  * @category Exceptions
  */
-class NotLoggedException extends \Exception {}
+class NotLoggedException extends \Exception
+{
+}

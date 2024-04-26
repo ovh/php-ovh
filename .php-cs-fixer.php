@@ -70,9 +70,18 @@ $config
         'constant_case' => ['case' => 'lower'],
         'single_quote' => true,
         'array_syntax' => ['syntax' => 'short'],
+        'class_definition' => [
+            'single_line' => false,
+        ],
+        'braces' => [
+            'position_after_functions_and_oop_constructs' => 'next',
+            'position_after_control_structures' => 'same',
+            'position_after_anonymous_constructs' => 'same',
+        ],
         'binary_operator_spaces' => ['operators' =>
             ['=>' => 'align_single_space_minimal', '=' => 'align_single_space_minimal']
         ],
+        'single_line_empty_body' => false,
     ])
     ->setFinder($finder);
 
