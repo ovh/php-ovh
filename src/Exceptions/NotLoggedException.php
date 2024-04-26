@@ -28,6 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
  * This file contains code about \Ovh\Exceptions\NotLoggedException class.
  */
 
