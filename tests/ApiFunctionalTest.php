@@ -1,29 +1,32 @@
 <?php
-# Copyright (c) 2013-2023, OVH SAS.
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-#   * Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright
-#     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution.
-#   * Neither the name of OVH SAS nor the
-#     names of its contributors may be used to endorse or promote products
-#     derived from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY OVH SAS AND CONTRIBUTORS ``AS IS'' AND ANY
-# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL OVH SAS AND CONTRIBUTORS BE LIABLE FOR ANY
-# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+/*
+ * Copyright (c) 2013-2024, OVH SAS.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *   * Neither the name of OVH SAS nor the
+ *     names of its contributors may be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY OVH SAS AND CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL OVH SAS AND CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 namespace Ovh\tests;
 
@@ -33,14 +36,16 @@ use Ovh\Api;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Functional tests of Api class
+ * Functional tests of Api class.
  *
- * @package  Ovh
  * @category Ovh
+ *
+ * @internal
+ *
+ * @coversNothing
  */
 class ApiFunctionalTest extends TestCase
 {
-
     /**
      * @var string
      */
@@ -82,13 +87,14 @@ class ApiFunctionalTest extends TestCase
     private $api;
 
     /**
-     * Define id to create object
+     * Define id to create object.
      */
-    protected function setUp() :void
+    protected function setUp(): void
     {
         foreach (['APP_KEY', 'APP_SECRET', 'CONSUMER', 'ENDPOINT'] as $envName) {
             if (!getenv($envName)) {
-                $this->markTestSkipped("Skip test due to missing $envName variable");
+                $this->markTestSkipped("Skip test due to missing {$envName} variable");
+
                 return;
             }
         }
@@ -111,39 +117,7 @@ class ApiFunctionalTest extends TestCase
     }
 
     /**
-     * Get private and protected method to unit test it
-     *
-     * @param string $name
-     *
-     * @return \ReflectionMethod
-     */
-    protected static function getPrivateMethod($name)
-    {
-        $class  = new \ReflectionClass(\Ovh\Api::class);
-        $method = $class->getMethod($name);
-        $method->setAccessible(true);
-
-        return $method;
-    }
-
-    /**
-     * Get private and protected property to unit test it
-     *
-     * @param string $name
-     *
-     * @return \ReflectionProperty
-     */
-    protected static function getPrivateProperty($name)
-    {
-        $class    = new \ReflectionClass(\Ovh\Api::class);
-        $property = $class->getProperty($name);
-        $property->setAccessible(true);
-
-        return $property;
-    }
-
-    /**
-     * Test if result contains consumerKey and validationUrl
+     * Test if result contains consumerKey and validationUrl.
      */
     public function testIfConsumerKeyIsReplace()
     {
@@ -158,12 +132,12 @@ class ApiFunctionalTest extends TestCase
         $credentials  = $this->api->requestCredentials($accessRules);
         $consumer_key = $property->getValue($this->api);
 
-        $this->assertSame($consumer_key, $credentials["consumerKey"]);
+        $this->assertSame($consumer_key, $credentials['consumerKey']);
         $this->assertNotEquals($consumer_key, $this->consumer_key);
     }
 
     /**
-     * Test if post request on me
+     * Test if post request on me.
      */
     public function testPostRestrictionAccessIp()
     {
@@ -172,15 +146,15 @@ class ApiFunctionalTest extends TestCase
         );
 
         $this->assertNull(
-            $this->api->post('/me/accessRestriction/ip', ['ip'      => $this->alternativeRangeIP,
-                                                          'rule'    => 'deny',
-                                                          'warning' => true,
+            $this->api->post('/me/accessRestriction/ip', ['ip' => $this->alternativeRangeIP,
+                'rule'                                         => 'deny',
+                'warning'                                      => true,
             ])
         );
     }
 
     /**
-     * Test if get request on /me
+     * Test if get request on /me.
      */
     public function testGetRestrictionAccessIP()
     {
@@ -199,7 +173,7 @@ class ApiFunctionalTest extends TestCase
     }
 
     /**
-     * Test if delete request on /me
+     * Test if delete request on /me.
      */
     public function testPutRestrictionAccessIP()
     {
@@ -208,7 +182,7 @@ class ApiFunctionalTest extends TestCase
         foreach ($result as $restrictionId) {
             $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
 
-            if (in_array($restriction["ip"], [$this->rangeIP, $this->alternativeRangeIP])) {
+            if (in_array($restriction['ip'], [$this->rangeIP, $this->alternativeRangeIP])) {
                 $this->assertNull(
                     $this->api->put('/me/accessRestriction/ip/' . $restrictionId, ['rule' => 'accept', 'warning' => true])
                 );
@@ -220,7 +194,7 @@ class ApiFunctionalTest extends TestCase
     }
 
     /**
-     * Test if delete request on /me
+     * Test if delete request on /me.
      */
     public function testDeleteRestrictionAccessIP()
     {
@@ -228,7 +202,7 @@ class ApiFunctionalTest extends TestCase
         foreach ($result as $restrictionId) {
             $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
 
-            if (in_array($restriction["ip"], [$this->rangeIP, $this->alternativeRangeIP])) {
+            if (in_array($restriction['ip'], [$this->rangeIP, $this->alternativeRangeIP])) {
                 $result = $this->api->delete('/me/accessRestriction/ip/' . $restrictionId);
                 $this->assertNull($result);
             }
@@ -236,18 +210,18 @@ class ApiFunctionalTest extends TestCase
     }
 
     /**
-     * Test if request without authentication works
+     * Test if request without authentication works.
      */
     public function testIfRequestWithoutAuthenticationWorks()
     {
         $api     = new Api($this->application_key, $this->application_secret, $this->endpoint, null, $this->client);
         $invoker = self::getPrivateMethod('rawCall');
-        $result = $invoker->invokeArgs($api, ['GET', '/xdsl/incidents']);
+        $result  = $invoker->invokeArgs($api, ['GET', '/xdsl/incidents']);
         $this->assertIsObject($result);
     }
 
     /**
-     * Test Api::get
+     * Test Api::get.
      */
     public function testApiGetWithParameters()
     {
@@ -257,7 +231,7 @@ class ApiFunctionalTest extends TestCase
     }
 
     /**
-     * Test Api::get, should build valide signature
+     * Test Api::get, should build valide signature.
      */
     public function testApiGetWithQueryString()
     {
@@ -266,12 +240,44 @@ class ApiFunctionalTest extends TestCase
     }
 
     /**
-     * Test APi::get without authentication
+     * Test APi::get without authentication.
      */
     public function testApiGetWithoutAuthentication()
     {
-        $api = new Api(null, null, $this->endpoint, null, $this->client);
+        $api    = new Api(null, null, $this->endpoint, null, $this->client);
         $result = $api->get('/hosting/web/moduleList', null, null, false);
         $this->assertIsArray($result);
+    }
+
+    /**
+     * Get private and protected method to unit test it.
+     *
+     * @param string $name
+     *
+     * @return \ReflectionMethod
+     */
+    protected static function getPrivateMethod($name)
+    {
+        $class  = new \ReflectionClass(Api::class);
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+
+        return $method;
+    }
+
+    /**
+     * Get private and protected property to unit test it.
+     *
+     * @param string $name
+     *
+     * @return \ReflectionProperty
+     */
+    protected static function getPrivateProperty($name)
+    {
+        $class    = new \ReflectionClass(Api::class);
+        $property = $class->getProperty($name);
+        $property->setAccessible(true);
+
+        return $property;
     }
 }
