@@ -327,7 +327,7 @@ class Api
      *
      * @throws \JsonException
      */
-    private function decodeResponse(Response $response)
+    private function decodeResponse(ResponseInterface $response)
     {
         if ($response->getStatusCode() === 204 || $response->getBody()->getSize() === 0) {
             return null;
