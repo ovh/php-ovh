@@ -420,6 +420,14 @@ class Api
     }
 
     /**
+     * Get the current consumer key
+     */
+    public function setConsumerKey($consumer_key): void
+    {
+        $this->consumer_key = $consumer_key;
+    }
+
+    /**
      * Return instance of http client
      */
     public function getHttpClient(): ?Client
