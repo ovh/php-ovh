@@ -327,7 +327,7 @@ class Api
      *
      * @throws \JsonException
      */
-    private function decodeResponse(Response $response)
+    private function decodeResponse(ResponseInterface $response)
     {
         if ($response->getStatusCode() === 204 || $response->getBody()->getSize() === 0) {
             return null;
@@ -417,6 +417,14 @@ class Api
     public function getConsumerKey(): ?string
     {
         return $this->consumer_key;
+    }
+
+    /**
+     * Get the current consumer key
+     */
+    public function setConsumerKey($consumer_key): void
+    {
+        $this->consumer_key = $consumer_key;
     }
 
     /**
