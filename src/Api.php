@@ -1,5 +1,5 @@
-<?php
-# Copyright (c) 2013-2023, OVH SAS.
+<?php // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
+# Copyright (c) 2013-2024, OVH SAS.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,8 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 
+require_once('OAuth2.php');
+
 /**
  * Wrapper to manage login and exchanges with simpliest Ovh API
  *
@@ -64,6 +66,12 @@ class Api
         'soyoustart-eu' => 'https://eu.api.soyoustart.com/1.0',
         'soyoustart-ca' => 'https://ca.api.soyoustart.com/1.0',
         'runabove-ca'   => 'https://api.runabove.com/1.0',
+    ];
+
+    private static $OAUTH2_TOKEN_URLS = [
+        "ovh-eu" => "https://www.ovh.com/auth/oauth2/token",
+        "ovh-ca" => "https://ca.ovh.com/auth/oauth2/token",
+        "ovh-us" => "https://us.ovhcloud.com/auth/oauth2/token",
     ];
 
     /**
@@ -107,6 +115,13 @@ class Api
      * @var Client
      */
     private ?Client $http_client;
+
+    /**
+     * OAuth2 wrapper if built with `withOAuth2`
+     *
+     * @var \Ovh\OAuth2
+     */
+    private ?OAuth2 $oauth2;
 
     /**
      * Construct a new wrapper instance
@@ -154,6 +169,26 @@ class Api
         $this->application_secret = $application_secret;
         $this->http_client        = $http_client;
         $this->consumer_key       = $consumer_key;
+        $this->oauth2             = null;
+    }
+
+    /**
+     * Alternative constructor to build a client using OAuth2
+     *
+     * @throws Exceptions\InvalidParameterException if one parameter is missing or with bad value
+     * @return Ovh\Api
+     */
+    public static function withOAuth2($clientId, $clientSecret, $apiEndpoint)
+    {
+        if (!array_key_exists($apiEndpoint, self::$OAUTH2_TOKEN_URLS)) {
+            throw new Exceptions\InvalidParameterException(
+                "OAuth2 authentication is not compatible with endpoint $apiEndpoint (it can only be used with ovh-eu, ovh-ca and ovh-us)"
+            );
+        }
+
+        $instance = new self("", "", $apiEndpoint);
+        $instance->oauth2 = new Oauth2($clientId, $clientSecret, self::$OAUTH2_TOKEN_URLS[$apiEndpoint]);
+        return $instance;
     }
 
     /**
@@ -298,22 +333,29 @@ class Api
         }
         $headers['Content-Type']      = 'application/json; charset=utf-8';
 
-        $headers['X-Ovh-Application'] = $this->application_key ?? '';
         if ($is_authenticated) {
-            if (!isset($this->time_delta)) {
-                $this->calculateTimeDelta();
-            }
-            $now = time() + $this->time_delta;
+            if (!is_null($this->oauth2)) {
+                $headers['Authorization'] = $this->oauth2->getAuthorizationHeader();
+            } else {
+                $headers['X-Ovh-Application'] = $this->application_key ?? '';
 
-            $headers['X-Ovh-Timestamp'] = $now;
+                if (!isset($this->time_delta)) {
+                    $this->calculateTimeDelta();
+                }
+                $now = time() + $this->time_delta;
 
-            if (isset($this->consumer_key)) {
-                $toSign                     = $this->application_secret . '+' . $this->consumer_key . '+' . $method
-                    . '+' . $url . '+' . $body . '+' . $now;
-                $signature                  = '$1$' . sha1($toSign);
-                $headers['X-Ovh-Consumer']  = $this->consumer_key;
-                $headers['X-Ovh-Signature'] = $signature;
+                $headers['X-Ovh-Timestamp'] = $now;
+
+                if (isset($this->consumer_key)) {
+                    $toSign                     = $this->application_secret . '+' . $this->consumer_key . '+' . $method
+                        . '+' . $url . '+' . $body . '+' . $now;
+                    $signature                  = '$1$' . sha1($toSign);
+                    $headers['X-Ovh-Consumer']  = $this->consumer_key;
+                    $headers['X-Ovh-Signature'] = $signature;
+                }
             }
+        } else {
+            $headers['X-Ovh-Application'] = $this->application_key ?? '';
         }
 
         /** @var Response $response */

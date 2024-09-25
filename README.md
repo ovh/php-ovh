@@ -1,6 +1,6 @@
 # OVHcloud APIs lightweight PHP wrapper
 
-[![PHP Wrapper for OVH APIs](https://github.com/ovh/php-ovh/blob/master/img/logo.png)](https://packagist.org/packages/ovh/ovh)
+[![PHP Wrapper for OVHcloud APIs](https://github.com/ovh/php-ovh/blob/master/img/logo.png)](https://packagist.org/packages/ovh/ovh)
 
 [![Source Code](https://img.shields.io/badge/source-ovh/php--ovh-blue.svg?style=flat-square)](https://github.com/ovh/php-ovh)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/ovh/php-ovh/ci.yaml?label=CI&logo=github&style=flat-square)](https://github.com/ovh/php-ovh/actions?query=workflow%3ACI)
@@ -38,7 +38,7 @@ echo 'Welcome '.$ovh->get('/me')['firstname'];
 
 ### Handle exceptions
 
-Under the hood, ```php-ovh``` uses [Guzzle](http://docs.guzzlephp.org/en/latest/quickstart.html) by default to issue API requests.
+Under the hood, `php-ovh` uses [Guzzle](http://docs.guzzlephp.org/en/latest/quickstart.html) by default to issue API requests.
 
 If everything goes well, it will return the response directly as shown in the examples above.
 
@@ -88,7 +88,6 @@ This flow will allow you to request consumerKey from an OVHcloud account owner.
 After allowing access to his account, he will be redirected to your application.
 
 See "OVHcloud API authentication" section below for more information about the authorization flow.
-
 
 ```php
 use \Ovh\Api;
@@ -147,9 +146,29 @@ foreach ($servers as $server) {
 
 ### More code samples
 
-Do you want to use OVH APIs? Maybe the script you want is already written in the [example part](examples/README.md) of this repository!
+Do you want to use OVHcloud APIs? Maybe the script you want is already written in the [example part](examples/README.md) of this repository!
 
-## OVHcloud API authentication
+## OAuth2 authentification
+
+`php-ovh` supports two forms of authentication:
+
+* OAuth2, using scopped service accounts, and compatible with OVHcloud IAM
+* application key & application secret & consumer key (covered in the next chapter)
+
+For OAuth2, first, you need to generate a pair of valid `client_id` and `client_secret`: you can proceed by
+[following this documentation](https://help.ovhcloud.com/csm/en-manage-service-account?id=kb_article_view&sysparm_article=KB0059343).
+
+Once you have retrieved your `client_id` and `client_secret`, you can instantiate an API client using:
+
+```php
+use \Ovh\Api;
+
+$ovh = Api::withOauth2($clientId, $clientSecret, $endpoint);
+```
+
+Supported endpoints are only `ovh-eu`, `ovh-ca` and `ovh-us`.
+
+## Custom OVHcloud API authentication
 
 To use the OVHcloud APIs you need three credentials:
 
@@ -169,7 +188,7 @@ They can also be created together if your application is intended to use only yo
 
 ### OVHcloud Europe
 
-* ```$endpoint = 'ovh-eu';```
+* `$endpoint = 'ovh-eu';`
 * Documentation: <https://eu.api.ovh.com/>
 * Console: <https://eu.api.ovh.com/console>
 * Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://eu.api.ovh.com/createApp/>
@@ -178,7 +197,7 @@ They can also be created together if your application is intended to use only yo
 
 ### OVHcloud US
 
-* ```$endpoint = 'ovh-us';```
+* `$endpoint = 'ovh-us';`
 * Documentation: <https://api.us.ovhcloud.com/>
 * Console: <https://api.us.ovhcloud.com/console>
 * Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://api.us.ovhcloud.com/createApp/>
@@ -186,7 +205,7 @@ They can also be created together if your application is intended to use only yo
 
 ### OVHcloud North America / Canada
 
-* ```$endpoint = 'ovh-ca';```
+* `$endpoint = 'ovh-ca';`
 * Documentation: <https://ca.api.ovh.com/>
 * Console: <https://ca.api.ovh.com/console>
 * Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://ca.api.ovh.com/createApp/>
@@ -195,7 +214,7 @@ They can also be created together if your application is intended to use only yo
 
 ### So you Start Europe
 
-* ```$endpoint = 'soyoustart-eu';```
+* `$endpoint = 'soyoustart-eu';`
 * Documentation: <https://eu.api.soyoustart.com/>
 * Console: <https://eu.api.soyoustart.com/console/>
 * Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://eu.api.soyoustart.com/createApp/>
@@ -204,7 +223,7 @@ They can also be created together if your application is intended to use only yo
 
 ### So you Start North America
 
-* ```$endpoint = 'soyoustart-ca';```
+* `$endpoint = 'soyoustart-ca';`
 * Documentation: <https://ca.api.soyoustart.com/>
 * Console: <https://ca.api.soyoustart.com/console/>
 * Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://ca.api.soyoustart.com/createApp/>
@@ -213,7 +232,7 @@ They can also be created together if your application is intended to use only yo
 
 ### Kimsufi Europe
 
-* ```$endpoint = 'kimsufi-eu';```
+* `$endpoint = 'kimsufi-eu';`
 * Documentation: <https://eu.api.kimsufi.com/>
 * Console: <https://eu.api.kimsufi.com/console/>
 * Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://eu.api.kimsufi.com/createApp/>
@@ -222,7 +241,7 @@ They can also be created together if your application is intended to use only yo
 
 ### Kimsufi North America
 
-* ```$endpoint = 'kimsufi-ca';```
+* `$endpoint = 'kimsufi-ca';`
 * Documentation: <https://ca.api.kimsufi.com/>
 * Console: <https://ca.api.kimsufi.com/console/>
 * Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://ca.api.kimsufi.com/createApp/>
