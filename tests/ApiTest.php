@@ -37,6 +37,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
 use Ovh\Api;
 use Ovh\Exceptions\InvalidParameterException;
+use Ovh\Exceptions\OAuth2FailureException;
 use PHPUnit\Framework\TestCase;
 
 # Mock values
@@ -63,6 +64,39 @@ class MockClient extends Client
 }
 
 /**
+* Get private and protected property to unit test it
+*
+* @param string $name
+*
+* @return \ReflectionProperty
+*/
+function getPrivateProperty($name)
+{
+    $class    = new \ReflectionClass(\Ovh\Api::class);
+    $property = $class->getProperty($name);
+    $property->setAccessible(true);
+
+    return $property;
+}
+
+function mockOauth2HttpClient($api, $client)
+{
+    $httpClientProperty = getPrivateProperty('http_client');
+    $httpClient = $httpClientProperty->setValue($api, $client);
+
+    $oauth2Property = getPrivateProperty('oauth2');
+    $oauth2 = $oauth2Property->getValue($api);
+
+    $class    = new \ReflectionClass(\Ovh\Oauth2::class);
+    $providerProperty = $class->getProperty('provider');
+    $providerProperty->setAccessible(true);
+    $provider = $providerProperty->getValue($oauth2);
+
+    $provider->setHttpClient($client);
+}
+
+
+/**
  * Test Api class
  *
  * @package  Ovh
@@ -70,22 +104,6 @@ class MockClient extends Client
  */
 class ApiTest extends TestCase
 {
-    /**
-     * Get private and protected property to unit test it
-     *
-     * @param string $name
-     *
-     * @return \ReflectionProperty
-     */
-    protected static function getPrivateProperty($name)
-    {
-        $class    = new \ReflectionClass(\Ovh\Api::class);
-        $property = $class->getProperty($name);
-        $property->setAccessible(true);
-
-        return $property;
-    }
-
     /**
      * Test missing $application_key
      */
@@ -169,7 +187,7 @@ class ApiTest extends TestCase
         $api = new Api(MOCK_APPLICATION_KEY, MOCK_APPLICATION_SECRET, 'ovh-eu', MOCK_CONSUMER_KEY, $client);
         $api->get("/me");
 
-        $property = self::getPrivateProperty('time_delta');
+        $property = getPrivateProperty('time_delta');
         $time_delta = $property->getValue($api);
         $this->assertSame('-10', $time_delta);
 
@@ -253,7 +271,6 @@ class ApiTest extends TestCase
         $api = new Api(MOCK_APPLICATION_KEY, MOCK_APPLICATION_SECRET, 'ovh-eu', MOCK_CONSUMER_KEY);
         $this->assertSame(MOCK_CONSUMER_KEY, $api->getConsumerKey());
     }
-
 
     /**
      * Test GET query args
@@ -429,7 +446,7 @@ class ApiTest extends TestCase
     {
         // GET /auth/time
         $mocks = [new Response(200, [], MOCK_TIME)];
-        // GET) x  (/1.0/call,/v1/call,/v2/call)
+        // GET x  (/1.0/call,/v1/call,/v2/call)
         for ($i = 0; $i < 3; $i++) {
             $mocks[] = new Response(200, [], '{}');
         }
@@ -486,5 +503,125 @@ class ApiTest extends TestCase
         $req = $calls[1]['request'];
         $this->assertSame('POST', $req->getMethod());
         $this->assertSame('https://eu.api.ovh.com/1.0/domain/zone/nonexisting.ovh/refresh', $req->getUri()->__toString());
+    }
+
+    public function testOauth2500()
+    {
+        $client = new MockClient(
+            // POST https://www.ovh.com/auth/oauth2/token
+            new Response(500, [], '<html><body><p>test</p></body></html>'),
+        );
+
+        $api = Api::withOauth2('client_id', 'client_secret', 'ovh-eu');
+        mockOauth2HttpClient($api, $client);
+
+        $this->expectException(OAuth2FailureException::class);
+        $this->expectExceptionMessage('OAuth2 failure: An OAuth server error was encountered that did not contain a JSON body');
+
+        $api->get('/call');
+    }
+
+    public function testOauth2BadJSON()
+    {
+        $client = new MockClient(
+            // POST https://www.ovh.com/auth/oauth2/token
+            new Response(200, [], '<html><body><p>test</p></body></html>'),
+        );
+
+        $api = Api::withOauth2('client_id', 'client_secret', 'ovh-eu');
+        mockOauth2HttpClient($api, $client);
+
+        $this->expectException(OAuth2FailureException::class);
+        $this->expectExceptionMessage('OAuth2 failure: Invalid response received from Authorization Server. Expected JSON.');
+
+        $api->get('/call');
+    }
+
+    public function testOauth2UnknownClient()
+    {
+        $client = new MockClient(
+            // POST https://www.ovh.com/auth/oauth2/token
+            new Response(200, [], '<html><body><p>test</p></body></html>'),
+        );
+
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('OAuth2 authentication is not compatible with endpoint unknown (it can only be used with ovh-eu, ovh-ca and ovh-us)');
+
+        Api::withOauth2('client_id', 'client_secret', 'unknown');
+    }
+
+    public function testOauth2InvalidCredentials()
+    {
+        $client = new MockClient(
+            // POST https://www.ovh.com/auth/oauth2/token
+            new Response(400, [], '{"error":"invalid_client_credentials","error_description":"client secret invalid"}'),
+        );
+
+        $api = Api::withOauth2('client_id', 'client_secret', 'ovh-eu');
+        mockOauth2HttpClient($api, $client);
+
+        $this->expectException(OAuth2FailureException::class);
+        $this->expectExceptionMessage('OAuth2 failure: invalid_client_credentials');
+
+        $api->get('/call');
+    }
+
+    public function testOauth2OK()
+    {
+        $client = new MockClient(
+            // POST https://www.ovh.com/auth/oauth2/token
+            new Response(200, [], '{"access_token":"cccccccccccccccc", "token_type":"Bearer", "expires_in":11,"scope":"all"}'),
+            // GET /1.0/call
+            new Response(200, [], '{}'),
+            // GET /1.0/call
+            new Response(200, [], '{}'),
+            // POST https://www.ovh.com/auth/oauth2/token
+            new Response(200, [], '{"access_token":"cccccccccccccccd", "token_type":"Bearer", "expires_in":11,"scope":"all"}'),
+            // GET /1.0/call
+            new Response(200, [], '{}'),
+        );
+
+        $api = Api::withOauth2('client_id', 'client_secret', 'ovh-eu');
+        mockOauth2HttpClient($api, $client);
+
+        $api->get('/call');
+
+        $calls = $client->calls;
+        $this->assertCount(2, $calls);
+
+        $req = $calls[0]['request'];
+        $this->assertSame('POST', $req->getMethod());
+        $this->assertSame('https://www.ovh.com/auth/oauth2/token', $req->getUri()->__toString());
+
+        $req = $calls[1]['request'];
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/call', $req->getUri()->__toString());
+        $this->assertSame('Bearer cccccccccccccccc', $req->getHeaderLine('Authorization'));
+
+        $api->get('/call');
+
+        $calls = $client->calls;
+        $this->assertCount(3, $calls);
+
+        $req = $calls[2]['request'];
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/call', $req->getUri()->__toString());
+        $this->assertSame('Bearer cccccccccccccccc', $req->getHeaderLine('Authorization'));
+
+        sleep(2);
+
+        $api->get('/call');
+
+        $calls = $client->calls;
+        $this->assertCount(5, $calls);
+
+        $req = $calls[3]['request'];
+        $this->assertSame('POST', $req->getMethod());
+        $this->assertSame('https://www.ovh.com/auth/oauth2/token', $req->getUri()->__toString());
+
+        $req = $calls[4]['request'];
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/call', $req->getUri()->__toString());
+        $this->assertSame('Bearer cccccccccccccccd', $req->getHeaderLine('Authorization'));
     }
 }
