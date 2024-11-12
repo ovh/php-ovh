@@ -104,7 +104,7 @@ $rights = [
 ];
 
 // After allowing your application access, the customer will be redirected to this URL.
-$redirectUrl = 'https://your_application_redirect_url'
+$redirectUrl = 'https://your_application_redirect_url';
 
 $credentials = $ovh->requestCredentials($rights, $redirectUrl);
 
