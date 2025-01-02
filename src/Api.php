@@ -142,7 +142,7 @@ class Api
         $application_secret,
         $api_endpoint,
         $consumer_key = null,
-        Client $http_client = null
+        ?Client $http_client = null
     ) {
         if (!isset($api_endpoint)) {
             throw new Exceptions\InvalidParameterException("Endpoint parameter is empty");
