@@ -374,7 +374,7 @@ class Api
         if ($response->getStatusCode() === 204 || $response->getBody()->getSize() === 0) {
             return null;
         }
-        return json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        return json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_IGNORE);
     }
 
     /**
