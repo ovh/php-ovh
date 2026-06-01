@@ -24,7 +24,7 @@ tar xzvf php-ovh-2.0.0-with-dependencies.tar.gz
 ```
 
 - Create a new token
-You can create a new token using this url: [https://api.ovh.com/createToken/?GET=/hosting/web/my_domain&GET=/hosting/web/offerCapabilities](https://api.ovh.com/createToken/?GET=/hosting/web/my_domain&GET=/hosting/web/offerCapabilities). Keep application key, application secret and consumer key to complete the script.
+You can create a new token using this url: [https://auth.eu.ovhcloud.com/api/createToken/?GET=/hosting/web/my_domain&GET=/hosting/web/offerCapabilities](https://auth.eu.ovhcloud.com/api/createToken/?GET=/hosting/web/my_domain&GET=/hosting/web/offerCapabilities). Keep application key, application secret and consumer key to complete the script.
 
 Be warn, this token is only validated for this script and for hosting called **my_domain**. Please replace **my_domain** by your web hosting reference!
 If you need a more generic token, you had to change right field.
@@ -113,5 +113,5 @@ Array
 
 ## What's more?
 
-You can discover all hosting possibilities by using API console to show all available endpoints: [https://api.ovh.com/console](https://api.ovh.com/console)
+You can discover all hosting possibilities by using API console to show all available endpoints: [https://api.eu.ovhcloud.com/console](https://api.eu.ovhcloud.com/console)
 

@@ -3,7 +3,7 @@ Migrate from legacy wrappers
 ############################
 
 This guide specifically targets developers comming from the legacy wrappers
-previously distributed on https://api.ovh.com/g934.first_step_with_api. It
+previously distributed on https://api.eu.ovhcloud.com/g934.first_step_with_api. It
 highligts the main evolutions between these 2 major version as well as some
 tips to help with the migration. If you have any further questions, feel free
 to drop a mail on api@ml.ovh.net (api-subscribe@ml.ovh.net to subscribe).

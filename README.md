@@ -189,10 +189,10 @@ They can also be created together if your application is intended to use only yo
 ### OVHcloud Europe
 
 * `$endpoint = 'ovh-eu';`
-* Documentation: <https://eu.api.ovh.com/>
-* Console: <https://eu.api.ovh.com/console>
-* Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://eu.api.ovh.com/createApp/>
-* Create account credentials (all keys at once for your own account only): <https://eu.api.ovh.com/createToken/>
+* Documentation: <https://api.eu.ovhcloud.com/>
+* Console: <https://api.eu.ovhcloud.com/console>
+* Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://auth.eu.ovhcloud.com/api/createApp/>
+* Create account credentials (all keys at once for your own account only): <https://auth.eu.ovhcloud.com/api/createToken/>
 * Community support: api-subscribe@ml.ovh.net
 
 ### OVHcloud US
@@ -206,10 +206,10 @@ They can also be created together if your application is intended to use only yo
 ### OVHcloud North America / Canada
 
 * `$endpoint = 'ovh-ca';`
-* Documentation: <https://ca.api.ovh.com/>
-* Console: <https://ca.api.ovh.com/console>
-* Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://ca.api.ovh.com/createApp/>
-* Create account credentials (all keys at once for your own account only): <https://ca.api.ovh.com/createToken/>
+* Documentation: <https://api.ca.ovhcloud.com/>
+* Console: <https://api.ca.ovhcloud.com/console>
+* Create application credentials (generate only application credentials, your app will need to implement an authorization flow): <https://auth.ca.ovhcloud.com/api/createApp/>
+* Create account credentials (all keys at once for your own account only): <https://auth.ca.ovhcloud.com/api/createToken/>
 * Community support: api-subscribe@ml.ovh.net
 
 ### So you Start Europe

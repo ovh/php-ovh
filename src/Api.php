@@ -1,5 +1,5 @@
 <?php // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
-# Copyright (c) 2013-2025, OVH SAS.
+# Copyright (c) 2013-2026, OVH SAS.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -58,8 +58,8 @@ class Api
      * @var array
      */
     private $endpoints = [
-        'ovh-eu'        => 'https://eu.api.ovh.com/1.0',
-        'ovh-ca'        => 'https://ca.api.ovh.com/1.0',
+        'ovh-eu'        => 'https://api.eu.ovhcloud.com/1.0',
+        'ovh-ca'        => 'https://api.ca.ovhcloud.com/1.0',
         'ovh-us'        => 'https://api.us.ovhcloud.com/1.0',
         'kimsufi-eu'    => 'https://eu.api.kimsufi.com/1.0',
         'kimsufi-ca'    => 'https://ca.api.kimsufi.com/1.0',
@@ -69,8 +69,8 @@ class Api
     ];
 
     private static $OAUTH2_TOKEN_URLS = [
-        "ovh-eu" => "https://www.ovh.com/auth/oauth2/token",
-        "ovh-ca" => "https://ca.ovh.com/auth/oauth2/token",
+        "ovh-eu" => "https://auth.eu.ovhcloud.com/oauth2/token",
+        "ovh-ca" => "https://auth.ca.ovhcloud.com/oauth2/token",
         "ovh-us" => "https://us.ovhcloud.com/auth/oauth2/token",
     ];
 
@@ -128,7 +128,7 @@ class Api
      *
      * @param string $application_key    key of your application.
      *                                   For OVH APIs, you can create a application's credentials on
-     *                                   https://api.ovh.com/createApp/
+     *                                   https://auth.eu.ovhcloud.com/api/createApp/
      * @param string $application_secret secret of your application.
      * @param string $api_endpoint       name of api selected
      * @param string $consumer_key       If you have already a consumer key, this parameter prevent to do a
