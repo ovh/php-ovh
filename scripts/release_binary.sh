@@ -108,7 +108,7 @@ require __DIR__ . "/vendor/autoload.php";
 use \Ovh\Api;
 
 // Informations about your application
-// You may create new credentials on https://api.ovh.com/createToken/index.cgi
+// You may create new credentials on https://auth.eu.ovhcloud.com/api/createToken/index.cgi
 $applicationKey     = "your_app_key";
 $applicationSecret  = "your_app_secret";
 $consumer_key       = "your_consumer_key";

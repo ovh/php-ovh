@@ -25,7 +25,7 @@ tar xzvf php-ovh-2.0.0-with-dependencies.tar.gz
 
 ## Create a new token
 
-You can create a new token using this url: [https://api.ovh.com/createToken/?GET=/domain/zone/*&POST=/domain/zone/*&DELETE=/domain/zone/*](https://api.ovh.com/createToken/?GET=/domain/zone/*&POST=/domain/zone/*&DELETE=/domain/zone/*).
+You can create a new token using this url: [https://auth.eu.ovhcloud.com/api/createToken/?GET=/domain/zone/*&POST=/domain/zone/*&DELETE=/domain/zone/*](https://auth.eu.ovhcloud.com/api/createToken/?GET=/domain/zone/*&POST=/domain/zone/*&DELETE=/domain/zone/*).
 Keep application key, application secret and consumer key to complete the script.
 
 Be warned, this token is only valid for this script on **/domain/zone/\*** APIs.
@@ -57,5 +57,5 @@ For instance, using the example values in this script, the answer would look lik
 
 ## What's more?
 
-You can discover all domain possibilities by using API console to show all available endpoints: [https://api.ovh.com/console](https://api.ovh.com/console)
+You can discover all domain possibilities by using API console to show all available endpoints: [https://api.eu.ovhcloud.com/console](https://api.eu.ovhcloud.com/console)
 

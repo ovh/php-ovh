@@ -29,7 +29,7 @@ tar xzvf php-ovh-2.0.0-with-dependencies.tar.gz
 ```
 
 ## Create a new token
-You can create a new token using [this url](https://api.ovh.com/createToken/?GET=/hosting/web/my_domain/attachedDomain&POST=/hosting/web/my_domain/attachedDomain&GET=/hosting/web/my_domain/attachedDomain/*&PUT=/hosting/web/my_domain/attachedDomain/*&DELETE=/hosting/web/my_domain/attachedDomain/*). Keep the application key, the application secret and the consumer key to complete the script.
+You can create a new token using [this url](https://auth.eu.ovhcloud.com/api/createToken/?GET=/hosting/web/my_domain/attachedDomain&POST=/hosting/web/my_domain/attachedDomain&GET=/hosting/web/my_domain/attachedDomain/*&PUT=/hosting/web/my_domain/attachedDomain/*&DELETE=/hosting/web/my_domain/attachedDomain/*). Keep the application key, the application secret and the consumer key to complete the script.
 
 Be warned, this token is only valid for this script and for hosting called **my_domain**. Please replace **my_domain** by your web hosting reference!
 If you need a more generic token, make sure to set the rights field to your needs
@@ -85,5 +85,5 @@ Domain detached from the web hosting
 
 ## What's next?
 
-You can discover all hosting possibilities by using API console to show all available endpoints: [https://api.ovh.com/console](https://api.ovh.com/console)
+You can discover all hosting possibilities by using API console to show all available endpoints: [https://api.eu.ovhcloud.com/console](https://api.eu.ovhcloud.com/console)
 
