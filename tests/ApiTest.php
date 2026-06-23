@@ -180,7 +180,7 @@ class ApiTest extends TestCase
     public function testTimeDeltaCompute()
     {
         $client = new MockClient(
-            new Response(200, [], time() - 10),
+            new Response(200, [], (string)(time() - 10)),
             new Response(200, [], '{}'),
         );
 
@@ -324,6 +324,55 @@ class ApiTest extends TestCase
         $req = $calls[0]['request'];
         $this->assertSame('GET', $req->getMethod());
         $this->assertSame('https://eu.api.ovh.com/1.0/me/api/credential?dryRun=true&notDryRun=false', $req->getUri()->__toString());
+    }
+
+    /**
+     * Test GET non-finite float query args
+     */
+    public function testGetNonFiniteFloatQueryArgs()
+    {
+        $client = new MockClient(new Response(200, [], '{}'));
+
+        $api = new Api(MOCK_APPLICATION_KEY, MOCK_APPLICATION_SECRET, 'ovh-eu', MOCK_CONSUMER_KEY, $client);
+        $api->get('/me/api/credential', ['nan' => NAN, 'inf' => INF, 'negativeInf' => -INF], null, false);
+
+        $calls = $client->calls;
+        $this->assertCount(1, $calls);
+
+        $req = $calls[0]['request'];
+        $this->assertSame('GET', $req->getMethod());
+        $this->assertSame('https://eu.api.ovh.com/1.0/me/api/credential?nan=NAN&inf=INF&negativeInf=-INF', $req->getUri()->__toString());
+    }
+
+    /**
+     * Test custom scalar headers
+     */
+    public function testCustomScalarHeaders()
+    {
+        $client = new MockClient(new Response(200, [], '{}'));
+
+        $api = new Api(MOCK_APPLICATION_KEY, MOCK_APPLICATION_SECRET, 'ovh-eu', MOCK_CONSUMER_KEY, $client);
+        $api->get('/me', null, [
+            'X-Int' => 123,
+            'X-Float' => 1.5,
+            'X-Bool-True' => true,
+            'X-Bool-False' => false,
+            'X-Null' => null,
+            'X-Array' => [123, true, null],
+            'X-Empty-Array' => [],
+        ], false);
+
+        $calls = $client->calls;
+        $this->assertCount(1, $calls);
+
+        $req = $calls[0]['request'];
+        $this->assertSame('123', $req->getHeaderLine('X-Int'));
+        $this->assertSame('1.5', $req->getHeaderLine('X-Float'));
+        $this->assertSame('1', $req->getHeaderLine('X-Bool-True'));
+        $this->assertSame('', $req->getHeaderLine('X-Bool-False'));
+        $this->assertSame('', $req->getHeaderLine('X-Null'));
+        $this->assertSame(['123', '1', ''], $req->getHeader('X-Array'));
+        $this->assertFalse($req->hasHeader('X-Empty-Array'));
     }
 
     /**

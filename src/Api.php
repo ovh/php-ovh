@@ -265,6 +265,76 @@ class Api
     }
 
     /**
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    private function normalizeQueryValue($value)
+    {
+        if (is_array($value)) {
+            foreach ($value as $key => $item) {
+                $value[$key] = $this->normalizeQueryValue($item);
+            }
+
+            return $value;
+        }
+
+        if ($value === false) {
+            return 'false';
+        }
+
+        if ($value === true) {
+            return 'true';
+        }
+
+        if (is_float($value) && !is_finite($value)) {
+            return is_nan($value) ? 'NAN' : ($value > 0 ? 'INF' : '-INF');
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param array<array-key, mixed> $headers
+     *
+     * @return array<array-key, mixed>
+     */
+    private function normalizeHeaders(array $headers): array
+    {
+        foreach ($headers as $name => $value) {
+            if (is_array($value)) {
+                if ($value === []) {
+                    unset($headers[$name]);
+                    continue;
+                }
+
+                foreach ($value as $index => $item) {
+                    if ($item === null || is_scalar($item) || (is_object($item) && method_exists($item, '__toString'))) {
+                        if (is_float($item) && !is_finite($item)) {
+                            $item = is_nan($item) ? 'NAN' : ($item > 0 ? 'INF' : '-INF');
+                        }
+
+                        $value[$index] = (string)$item;
+                    }
+                }
+
+                $headers[$name] = $value;
+                continue;
+            }
+
+            if ($value === null || is_scalar($value) || (is_object($value) && method_exists($value, '__toString'))) {
+                if (is_float($value) && !is_finite($value)) {
+                    $value = is_nan($value) ? 'NAN' : ($value > 0 ? 'INF' : '-INF');
+                }
+
+                $headers[$name] = (string)$value;
+            }
+        }
+
+        return $headers;
+    }
+
+    /**
      * This is the main method of this wrapper. It will
      * sign a given query and return its result.
      *
@@ -307,13 +377,8 @@ class Api
 
             $query = array_merge($query, (array)$content);
 
-            // rewrite query args to properly dump true/false parameters
             foreach ($query as $key => $value) {
-                if ($value === false) {
-                    $query[$key] = "false";
-                } elseif ($value === true) {
-                    $query[$key] = "true";
-                }
+                $query[$key] = $this->normalizeQueryValue($value);
             }
 
             $query = \GuzzleHttp\Psr7\Query::build($query);
@@ -331,6 +396,7 @@ class Api
         if (!is_array($headers)) {
             $headers = [];
         }
+        $headers = $this->normalizeHeaders($headers);
         $headers['Content-Type']      = 'application/json; charset=utf-8';
 
         if ($is_authenticated) {
@@ -342,7 +408,7 @@ class Api
                 if (!isset($this->time_delta)) {
                     $this->calculateTimeDelta();
                 }
-                $now = time() + $this->time_delta;
+                $now = (string)(time() + $this->time_delta);
 
                 $headers['X-Ovh-Timestamp'] = $now;
 
