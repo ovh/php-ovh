@@ -67,9 +67,10 @@ use \Ovh\Api;
 use GuzzleHttp\Client;
 
 // Instantiate a custom Guzzle HTTP client and tweak it
-$client = new Client();
-$client->setDefaultOption('timeout', 1);
-$client->setDefaultOption('headers', ['User-Agent' => 'api_client']);
+$client = new Client([
+    'timeout' => 1,
+    'headers' => ['User-Agent' => 'api_client'],
+]);
 
 // Api credentials can be retrieved from the urls specified in the "Supported endpoints" section below.
 // Inject the custom HTTP client as the 5th argument of the constructor
