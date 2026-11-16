@@ -344,7 +344,7 @@ class Api
                 }
                 $now = time() + $this->time_delta;
 
-                $headers['X-Ovh-Timestamp'] = $now;
+                $headers['X-Ovh-Timestamp'] = (string) $now;
 
                 if (isset($this->consumer_key)) {
                     $toSign                     = $this->application_secret . '+' . $this->consumer_key . '+' . $method
